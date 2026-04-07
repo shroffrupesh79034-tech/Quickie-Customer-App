@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quickies - Instant Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF8C00, #FF4500);
+            --primary-solid: #FF6A00;
+            --accent-green: #228B22;
+            --bg-color: #F5F5F7;
+            --card-bg: #FFFFFF;
+            --text-main: #2b2b2b;
+            --text-mutated: #8e8e93;
+            --border-color: #e5e5ea;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow-soft: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow-hover: 0 8px 25px rgba(255, 106, 0, 0.2);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Hide scrollbars for horizontal lists */
+        .hide-scroll {
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        .hide-scroll::-webkit-scrollbar {
+            display: none; /* Chrome, Safari */
+        }
+
+        /* Sticky Header */
+        .header {
+            background: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+        }
+
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .location svg { color: var(--primary-solid); }
+        .location span { display: block; font-size: 0.75rem; font-weight: 400; color: var(--text-mutated); }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .icon-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            display: flex; justify-content: center; align-items: center;
+            position: relative;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+        .icon-btn:hover { background: #ffeae0; color: var(--primary-solid); }
+
+        .cart-badge {
+            position: absolute;
+            top: -2px; right: -2px;
+            background: var(--primary-solid);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* 4 Pillars Navigation */
+        .pillars-nav {
+            display: flex;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .pillar-card {
+            min-width: 85px;
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 15px 5px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+            border: 2px solid transparent;
+            cursor: pointer;
+            user-select: none;
+        }
+        .pillar-card:hover { transform: translateY(-3px); }
+        .pillar-card.active { border-color: var(--primary-solid); background: #fff5f0; }
+
+        .pillar-icon { font-size: 2rem; margin-bottom: 5px; }
+        .pillar-name { font-weight: 600; font-size: 0.85rem; }
+
+        /* Main Content Area */
+        #mainContent { min-height: 50vh; }
+
+        /* Hero Offers (Food) */
+        .hero-carousel {
+            display: flex;
+            gap: 15px;
+            padding: 10px 0 20px;
+        }
+
+        .offer-card {
+            min-width: 280px;
+            height: 140px;
+            border-radius: var(--radius-lg);
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: var(--shadow-hover);
+        }
+        .offer-card::after { /* Abstract shape decoration */
+            content: ''; position: absolute; right: -30px; bottom: -30px;
+            width: 120px; height: 120px; border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .offer-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; z-index: 2; }
+        .offer-timer { font-size: 0.85rem; font-weight: 600; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px; width: fit-content; z-index: 2; }
+
+        /* Search Bar */
+        .search-container { margin-bottom: 30px; position: relative; }
+        .search-container input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border-radius: 30px;
+            border: none;
+            background: var(--card-bg);
+            box-shadow: var(--shadow-soft);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .search-container input:focus { box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.3); }
+        .search-container svg { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-mutated); width: 20px; height: 20px;}
+
+        /* Order Our Best Food */
+        .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; }
+
+        .sub-categories {
+            display: flex; gap: 20px; padding-bottom: 20px; margin-bottom: 10px;
+        }
+
+        .sub-cat-item {
+            display: flex; flex-direction: column; align-items: center; min-width: 70px; gap: 8px; cursor: pointer; transition: var(--transition);
+        }
+        .sub-cat-item:hover { transform: scale(1.05); }
+
+        .sub-cat-img {
+            width: 65px; height: 65px; border-radius: 50%; object-fit: cover;
+            box-shadow: var(--shadow-soft); border: 2px solid white;
+        }
+        .sub-cat-text { font-size: 0.8rem; font-weight: 600; text-align: center; }
+
+        /* Advanced Filters */
+        .filters-row {
+            display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: nowrap;
+        }
+
+        .filter-pill {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            font-family: inherit; font-size: 0.9rem; font-weight: 500;
+            cursor: pointer; color: var(--text-dark);
+            white-space: nowrap; transition: var(--transition);
+        }
+        .filter-pill:hover, .filter-pill.active {
+            background: #fff5f0; border-color: var(--primary-solid); color: var(--primary-solid); font-weight: 600;
+        }
+
+        /* Shops Container Grid */
+        .shops-container { display: flex; flex-direction: column; gap: 30px; margin-bottom: 40px; }
+
+        /* Shop Card */
+        .shop-section {
+            background: var(--card-bg); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-soft);
+        }
+
+        .shop-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;
+        }
+
+        .shop-name { font-size: 1.2rem; font-weight: 700; color: var(--primary-solid); }
+        .shop-meta { display: flex; gap: 15px; font-size: 0.9rem; font-weight: 600; color: var(--text-mutated); }
+        .shop-meta span { display: flex; align-items: center; gap: 4px; }
+        .shop-meta .rating { color: #f39c12; }
+
+        .shop-products { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        /* Product Card */
+        .product-card {
+            display: flex; flex-direction: column; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; transition: var(--transition);
+        }
+        .product-card:hover { transform: scale(1.02); box-shadow: var(--shadow-hover); border-color: transparent;}
+        
+        .product-img { width: 100%; height: 120px; object-fit: cover; }
+        
+        .product-details { padding: 12px; display: flex; flex-direction: column; flex: 1; }
+        .product-cat { font-size: 0.7rem; color: var(--primary-solid); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+        .product-name { font-size: 0.95rem; font-weight: 600; line-height: 1.3; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1;}
+        
+        .product-action { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .product-price { font-size: 1.1rem; font-weight: 700; }
+        
+        .add-btn {
+            background: var(--card-bg); color: var(--accent-green); border: 1px solid var(--accent-green); font-weight: 600; min-height: 36px; min-width: 60px; border-radius: 8px; transition: var(--transition);
+        }
+        .add-btn:hover { background: var(--accent-green); color: white; }
+
+        /* Custom Modal / Alert */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        
+        .custom-alert {
+            background: var(--card-bg); width: 90%; max-width: 400px; border-radius: var(--radius-lg); padding: 30px 25px; text-align: center; transform: scale(0.9); transition: transform 0.3s; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .modal-overlay.open .custom-alert { transform: scale(1); }
+
+        .alert-icon { width: 60px; height: 60px; background: #fff0f0; color: #ff4757; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; font-size: 2rem; }
+        .alert-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; }
+        .alert-msg { font-size: 0.95rem; color: var(--text-mutated); margin-bottom: 25px; margin-top: 10px; line-height: 1.5; }
+        .alert-actions { display: flex; gap: 15px; }
+        .alert-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; }
+        .btn-cancel { background: var(--border-color); color: var(--text-dark); }
+        .btn-confirm { background: var(--primary-gradient); color: white; box-shadow: var(--shadow-hover); }
+
+        /* Footer */
+        .footer { background: #e0e0e5; padding: 40px 20px; text-align: center; color: var(--text-mutated); font-size: 0.9rem; }
+        .footer a { color: var(--text-main); font-weight: 500; text-decoration: none; margin: 0 10px; }
+        .footer p { margin-top: 20px; }
+
+        /* Responsive Desktop */
+        @media(min-width: 768px) {
+            .shops-container { grid-template-columns: repeat(2, 1fr); display: grid;}
+            .shop-products { grid-template-columns: repeat(2, 1fr); }
+            /* Desktop allows scrollbar track for better mouse ux if needed, but horizontal drag is fine */
+            .location span { display: inline-block; }
+            .location { gap: 15px; margin-left: 10px; }
+        }
+
+        /* SVG Reset */
+        svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Header -->
+    <header class="header">
+        <div class="container header-content">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="logo">Quickies</div>
+                <div class="location">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <div><span>Delivery to</span>Bihar, India</div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="icon-btn">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </button>
+                <button class="icon-btn" onclick="viewCart()">
+                    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    <div class="cart-badge" id="cartCount">0</div>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 4 Pillars Navigation -->
+        <nav class="pillars-nav hide-scroll" id="pillarsContainer">
+            <div class="pillar-card active" data-target="food">
+                <div class="pillar-icon">🍔</div>
+                <div class="pillar-name">Food</div>
+            </div>
+            <div class="pillar-card" data-target="grocery">
+                <div class="pillar-icon">🛒</div>
+                <div class="pillar-name">Grocery</div>
+            </div>
+            <div class="pillar-card" data-target="veggies">
+                <div class="pillar-icon">🍅</div>
+                <div class="pillar-name">Veggies</div>
+            </div>
+            <div class="pillar-card" data-target="medicine">
+                <div class="pillar-icon">💊</div>
+                <div class="pillar-name">Medicine</div>
+            </div>
+        </nav>
+
+        <!-- Dynamic Main Content Area -->
+        <main id="mainContent">
+            <!-- Content injected here via JS -->
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+        <a href="#">Contact Support</a>
+        <p>© 2026 Quickies Application. All rights reserved.</p>
+    </footer>
+
+    <!-- Custom Alert Modal (Single Shop Restriction) -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="custom-alert">
+            <div class="alert-icon">!</div>
+            <h3 class="alert-title">Multiple Shops Cart Error</h3>
+            <p class="alert-msg" id="alertMsg">You can only order from one shop at a time. Do you want to clear your cart?</p>
+            <div class="alert-actions">
+                <button class="alert-btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="alert-btn btn-confirm" id="confirmClearBtn">Clear Cart & Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. MOCK DATA BASE ---
+        const shops = [
+            {
+                id: "shop_1", name: "Biryani House", rating: 4.5, distance: 1.2, 
+                products: [
+                    { id: 101, category: "Biryani", name: "Hyderabadi Chicken Biryani", price: 250, image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80" },
+                    { id: 102, category: "Biryani", name: "Mutton Dum Biryani Special", price: 350, image: "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=400&q=80" }
+                ]
+            },
+            {
+                id: "shop_2", name: "Pizza Central", rating: 4.1, distance: 3.5, 
+                products: [
+                    { id: 201, category: "Pizza", name: "Margherita Vesuvius", price: 299, image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80" },
+                    { id: 202, category: "Pizza", name: "Pepperoni Blast Medium", price: 449, image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&q=80" },
+                    { id: 203, category: "Burger", name: "Cheesy Crust Burger", price: 180, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80"}
+                ]
+            },
+            {
+                id: "shop_3", name: "Momos & Rolls Street", rating: 3.9, distance: 0.8, 
+                products: [
+                    { id: 301, category: "Momos", name: "Steamed Chicken Momos (8pcs)", price: 90, image: "https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?w=400&q=80" },
+                    { id: 302, category: "Rolls", name: "Kathi Egg Roll Combo", price: 60, image: "https://images.unsplash.com/photo-1626804475297-4160cbcedf26?w=400&q=80" }
+                ]
+            },
+            {
+                id: "shop_4", name: "Burger Bros", rating: 4.8, distance: 2.1, 
+                products: [
+                    { id: 401, category: "Burger", name: "Spicy Paneer Burger", price: 140, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80" },
+                    { id: 402, category: "Noodle", name: "Hakka Noodles", price: 120, image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80" }
+                ]
+            },
+            {
+                id: "shop_5", name: "Sweet Treats & Cakes", rating: 4.6, distance: 1.5,
+                products: [
+                    { id: 501, category: "Sweets", name: "Hot Gulab Jamun (2pcs)", price: 40, image: "https://images.unsplash.com/photo-1599818815182-1dd94e756184?w=400&q=80" },
+                    { id: 502, category: "Cake", name: "Chocolate Truffle Pastry", price: 80, image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80" },
+                    { id: 503, category: "Shake", name: "Thick Oreo Shake", price: 110, image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80"}
+                ]
+            },
+            {
+                id: "shop_6", name: "Punjabi Dhaba", rating: 4.3, distance: 4.0,
+                products: [
+                    { id: 601, category: "Paratha", name: "Aloo Paratha with Curd", price: 70, image: "https://images.unsplash.com/photo-1626777552726-4113cedf7d2a?w=400&q=80" }
+                ]
+            }
+        ];
+
+        const subCategoriesImgMap = {
+            "Biryani": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=150",
+            "Momos": "https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?w=150",
+            "Burger": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=150",
+            "Rolls": "https://images.unsplash.com/photo-1626804475297-4160cbcedf26?w=150",
+            "Pizza": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=150",
+            "Paratha": "https://images.unsplash.com/photo-1626777552726-4113cedf7d2a?w=150",
+            "Cake": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=150",
+            "Noodle": "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=150",
+            "Sweets": "https://images.unsplash.com/photo-1599818815182-1dd94e756184?w=150",
+            "Shake": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=150"
+        };
+
+
+        // --- 2. GLOBAL STATE & LOGIC ---
+        let currentSort = null; // 'low_high', 'rating', 'distance'
+        const cart = {
+            shopId: null,
+            items: []
+        };
+        let pendingItemToAdd = null; // Stored if waiting for confirmation
+
+        // --- 3. RENDERING ENGINE ---
+        const mainContent = document.getElementById('mainContent');
+
+        function renderFoodSection() {
+            mainContent.innerHTML = `
+                <!-- A. Hero Offer Carousel -->
+                <div class="hero-carousel hide-scroll">
+                    <div class="offer-card">
+                        <div class="offer-title">50% OFF<br>on Biryani</div>
+                        <div class="offer-timer" id="timer1">Ends in 12:35</div>
+                    </div>
+                    <div class="offer-card" style="background: linear-gradient(135deg, #1abc9c, #16a085);">
+                        <div class="offer-title">Free Dessert<br>Above ₹499</div>
+                        <div class="offer-timer" id="timer2">Ends in 24:00</div>
+                    </div>
+                </div>
+
+                <!-- B. Local Search -->
+                <div class="search-container">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" placeholder="Search dish, restaurant...">
+                </div>
+
+                <!-- C. Sub Categories -->
+                <h3 class="section-title">Order Our Best Food</h3>
+                <div class="sub-categories hide-scroll">
+                    ${Object.keys(subCategoriesImgMap).map(cat => `
+                        <div class="sub-cat-item">
+                            <img src="${subCategoriesImgMap[cat]}" class="sub-cat-img" alt="${cat}">
+                            <div class="sub-cat-text">${cat}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- D. Advanced Filters -->
+                <div class="filters-row hide-scroll">
+                    <button class="filter-pill" onclick="applySort('low_high', this)">Price: Low to High</button>
+                    <button class="filter-pill" onclick="applySort('rating', this)">Rating: 4.0+</button>
+                    <button class="filter-pill" onclick="applySort('distance', this)">Nearest Distance</button>
+                </div>
+
+                <!-- Shop Grid -->
+                <div class="shops-container" id="shopsGrid"></div>
+            `;
+            
+            startDynamicTimers();
+            renderShopsData(shops);
+            initHorizontallScrollDrags();
+        }
+
+        // Timer Logic
+        function startDynamicTimers() {
+            let totalSeconds = (12 * 60) + 35; // 12:35
+            setInterval(() => {
+                if(totalSeconds <= 0) return;
+                totalSeconds--;
+                const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+                const s = String(totalSeconds % 60).padStart(2, '0');
+                const timerEl = document.getElementById('timer1');
+                if(timerEl) timerEl.innerText = `Ends in ${m}:${s}`;
+            }, 1000);
+        }
+
+        function renderShopsData(shopArray) {
+            const grid = document.getElementById('shopsGrid');
+            grid.innerHTML = '';
+            
+            shopArray.forEach(shop => {
+                const section = document.createElement('div');
+                section.className = 'shop-section';
+                
+                // Top products logic based on sorting
+                let sortedProducts = [...shop.products];
+                if(currentSort === 'low_high') {
+                    sortedProducts.sort((a,b) => a.price - b.price);
+                }
+
+                section.innerHTML = `
+                    <div class="shop-header">
+                        <div class="shop-name">${shop.name}</div>
+                        <div class="shop-meta">
+                            <span class="rating">★ ${shop.rating.toFixed(1)}</span>
+                            <span>📍 ${shop.distance} km</span>
+                        </div>
+                    </div>
+                    <div class="shop-products">
+                        ${sortedProducts.map(prod => `
+                            <div class="product-card">
+                                <img src="${prod.image}" class="product-img" loading="lazy" alt="${prod.name}">
+                                <div class="product-details">
+                                    <div class="product-cat">${prod.category}</div>
+                                    <div class="product-name">${prod.name}</div>
+                                    <div class="product-action">
+                                        <div class="product-price">₹${prod.price}</div>
+                                        <button class="add-btn" onclick='handleAddToCart(${JSON.stringify(shop)}, ${JSON.stringify(prod)})'>Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                grid.appendChild(section);
+            });
+        }
+
+        // Filter Handlers
+        window.applySort = function(sortType, btnElement) {
+            // Update active styling
+            document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            if(currentSort !== sortType) {
+                btnElement.classList.add('active');
+                currentSort = sortType;
+            } else {
+                currentSort = null; // Toggle off
+            }
+
+            // Apply logic
+            let displayShops = [...shops];
+            
+            if (currentSort === 'rating') {
+                displayShops = displayShops.filter(s => s.rating >= 4.0).sort((a,b) => b.rating - a.rating);
+            } else if (currentSort === 'distance') {
+                displayShops = displayShops.sort((a,b) => a.distance - b.distance);
+            } else {
+                // Keep default shop order, but sub-products are sorted ascending inside renderShopsData
+            }
+            
+            renderShopsData(displayShops);
+        }
+
+        // --- 4. CART BUSINESS LOGIC (Strict Grouping Rule) ---
+
+        window.handleAddToCart = function(shopObj, productObj) {
+            // Check Cart Shop Rules
+            if (cart.shopId === null || cart.shopId === shopObj.id) {
+                // Success: Add normally
+                executeAdd(shopObj, productObj);
+            } else {
+                // Blocked: Mixed cart
+                const existingShopName = shops.find(s => s.id === cart.shopId)?.name || 'another shop';
+                document.getElementById('alertMsg').innerHTML = `You can only order from one shop at a time.<br><br>Your cart currently contains items from <b>${existingShopName}</b>.<br>Would you like to clear your cart and start a new order with <b>${shopObj.name}</b>?`;
+                
+                // Store pending data for confirmation override
+                pendingItemToAdd = { shop: shopObj, product: productObj };
+                openModal();
+            }
+        }
+
+        function executeAdd(shop, product) {
+            cart.shopId = shop.id;
+            cart.items.push(product);
+            
+            // UI Feedback
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartCount');
+            badge.innerText = cart.items.length;
+            
+            // Pop Animation
+            badge.style.transform = 'scale(1.5)';
+            setTimeout(() => badge.style.transform = 'none', 200);
+        }
+
+        // Modal Controls
+        const modal = document.getElementById('alertModal');
+        
+        function openModal() {
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('open'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.closeModal = function() {
+            modal.classList.remove('open');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+            pendingItemToAdd = null;
+        }
+
+        document.getElementById('confirmClearBtn').addEventListener('click', () => {
+            if(pendingItemToAdd) {
+                // Clear and Override
+                cart.items = [];
+                executeAdd(pendingItemToAdd.shop, pendingItemToAdd.product);
+            }
+            closeModal();
+        });
+
+
+        // --- 5. INITIALIZATION & UTILS ---
+
+        // Pillar Selection
+        document.querySelectorAll('.pillar-card').forEach(card => {
+            card.addEventListener('click', () => {
+                if(card.classList.contains('active')) return;
+                
+                document.querySelectorAll('.pillar-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                
+                const target = card.getAttribute('data-target');
+                if (target === 'food') {
+                    renderFoodSection();
+                } else {
+                    mainContent.innerHTML = `<div style="text-align:center; padding: 50px 20px; color: #8e8e93;"><h4>${target.toUpperCase()} MODULE IN DEVELOPMENT</h4><p>We are stocking up the inventory!</p></div>`;
+                }
+            });
+        });
+
+        // Enable Drag to scroll for horizontal lists (for desktop users touching without shift+scroll)
+        function initHorizontallScrollDrags() {
+            const sliders = document.querySelectorAll('.hide-scroll');
+            let startX, scrollLeft, isDown = false;
+            
+            sliders.forEach(slider => {
+                slider.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    startX = e.pageX - slider.offsetLeft;
+                    scrollLeft = slider.scrollLeft;
+                    slider.style.cursor = 'grabbing';
+                });
+                slider.addEventListener('mouseleave', () => { isDown = false; slider.style.cursor = ''; });
+                slider.addEventListener('mouseup', () => { isDown = false; slider.style.cursor = ''; });
+                slider.addEventListener('mousemove', (e) => {
+                    if(!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - slider.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    slider.scrollLeft = scrollLeft - walk;
+                });
+            });
+        }
+        
+        // Start App
+        renderFoodSection();
+
+    </script>
+</body>
+</html>
