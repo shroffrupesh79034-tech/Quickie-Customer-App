@@ -63,36 +63,39 @@ const App = () => {
 
 const styles = {
   tabGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)', // Default 4 in a row for web
-    gap: '12px',
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '16px',
     marginBottom: '20px',
+    flexWrap: 'wrap',
   },
   tabItem: {
     display: 'flex',
-    flexDirection: 'column', // Stack icon and text slightly for "mid-large" feel
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '4px',
-    padding: '12px 10px',
-    borderRadius: '16px', // Balanced rounded corner
+    gap: '8px',
+    padding: '20px',
+    borderRadius: '24px',
     cursor: 'pointer',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-    border: '1px solid var(--border-color)',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.06)',
+    border: '2px solid var(--border-color)',
     background: 'white',
-    height: '75px', // Consistent mid-large height
+    width: '230px', // Fixed length
+    height: '110px', // Fixed height
   },
   tabActive: {
     background: 'var(--primary-gradient)',
     color: 'white',
-    transform: 'translateY(-2px)',
-    border: 'none',
-    boxShadow: '0 8px 16px rgba(255, 75, 43, 0.25)',
+    transform: 'translateY(-4px)', // More pronounced lift
+    borderColor: 'transparent',
+    boxShadow: '0 12px 24px rgba(255, 75, 43, 0.3)',
   },
   tabInactive: {
     color: 'var(--text-main)',
-    fontWeight: 700,
+    fontWeight: 800,
+    fontSize: '1.1rem', // Larger font
   }
 };
 
