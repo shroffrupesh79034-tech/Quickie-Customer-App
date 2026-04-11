@@ -3,771 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Profile — Quickies</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Quickies - Premium Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Premium Matte Black & Pinkish Gold Theme */
         :root {
-            --primary-gradient: linear-gradient(135deg, #E0BFB8, #C89F9C);
-            --primary-solid: #D4AFB9;
-            --btn-text: #121212;
-            --bg: #0F0F0F;
-            --card-bg: #1C1C1E;
-            --input-bg: #252527;
-            --text-main: #FDF5F5;
-            --text-sub: #D4AFB9;
-            --border: #2A2A2A;
-            --success: #4CAF50;
-            --danger: #FF453A;
-            --shadow: 0 12px 40px rgba(0,0,0,0.6);
-            --radius: 20px;
-            --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            --bg-color: #0F0F0F;          /* Pure Matte Black */
+            --card-bg: #1C1C1E;           /* Elevated Black */
+            --text-primary: #FDF5F5;      /* Off-White */
+            --text-accent: #D4AFB9;       /* Pinkish Gold Text */
+            --btn-gradient: linear-gradient(135deg, #E0BFB8, #C89F9C); /* Rose Gold */
+            --btn-text: #121212;          /* Dark Text for contrast */
+            --border-color: #2A2A2A;      /* Subtle border */
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding-bottom: 60px;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        a { text-decoration: none; color: inherit; }
-        button, input { font-family: inherit; outline: none; border: none; background: none; }
-        svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed; top: 20px; left: 50%;
-            transform: translateX(-50%) translateY(-120px);
-            background: #1e2025; border: 1px solid var(--border);
-            color: var(--text-main); padding: 14px 24px; border-radius: 14px;
-            font-weight: 700; font-size: 0.9rem; z-index: 9999;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
-            white-space: nowrap; max-width: 90vw; text-align: center;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .otp-badge {
-            display: inline-block; background: var(--primary-gradient); color: var(--btn-text);
-            font-size: 1.2rem; font-weight: 900; padding: 3px 14px; border-radius: 8px; margin-left: 8px;
-        }
-
-        /* ===== AUTH OVERLAY ===== */
-        /* Mobile: bottom-sheet. Desktop: centered modal */
-        .auth-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.88); backdrop-filter: blur(18px);
-            display: flex; justify-content: center; align-items: flex-end;
-            z-index: 1000;
-        }
-        @media (min-width: 600px) {
-            .auth-overlay { align-items: center; padding: 24px; }
-        }
-
-        /* Card is a flex column so Back+Tabs stay fixed, body scrolls */
-        .auth-card {
-            width: 100%; max-width: 460px;
-            background: var(--card-bg);
-            border-radius: 24px 24px 0 0;
-            border: 1px solid var(--border); border-bottom: none;
-            box-shadow: var(--shadow);
-            display: flex; flex-direction: column;
-            max-height: 93vh;
-        }
-        @media (min-width: 600px) {
-            .auth-card {
-                border-radius: 24px;
-                border-bottom: 1px solid var(--border);
-                max-height: 90vh;
-            }
-        }
-
-        /* Back bar — flex-shrink:0 means it NEVER disappears when OTP section appears */
-        .auth-back-bar {
-            padding: 18px 22px 4px;
-            flex-shrink: 0;
-        }
-        .auth-back-link {
-            display: inline-flex; align-items: center; gap: 8px;
-            color: var(--text-sub); font-weight: 700; font-size: 0.88rem;
-            transition: color 0.2s;
-        }
-        .auth-back-link:hover, .auth-back-link:active { color: var(--primary-solid); }
-
-        .auth-tabs {
-            display: flex; background: #161618;
-            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-        .auth-tab {
-            flex: 1; padding: 18px; text-align: center;
-            font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            color: var(--text-sub); transition: var(--transition);
-        }
-        .auth-tab.active {
-            color: var(--primary-solid);
-            border-bottom: 3px solid var(--primary-solid);
-            background: var(--card-bg);
-        }
-
-        /* Scrollable form area */
-        .auth-body {
-            padding: 26px 24px 40px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            flex: 1;
-        }
-        @media (min-width: 600px) { .auth-body { padding: 30px 32px 44px; } }
-
-        .form { display: none; animation: fadeUp 0.35s ease; }
-        .form.active { display: block; }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-
-        .form-title { font-size: 1.45rem; font-weight: 900; margin-bottom: 22px; letter-spacing: -0.5px; }
-
-        .input-wrap { margin-bottom: 16px; }
-        .input-wrap label {
-            display: block; font-size: 0.75rem; font-weight: 800;
-            color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;
-        }
-        .phone-row { display: flex; align-items: center; gap: 10px; }
-        .prefix {
-            background: var(--input-bg); border: 1px solid var(--border);
-            padding: 16px 13px; border-radius: 12px;
-            font-weight: 700; color: var(--text-sub); font-size: 1rem; flex-shrink: 0;
-        }
-        .input-wrap input {
-            width: 100%; padding: 15px 16px; border-radius: 12px;
-            border: 1px solid var(--border); background: var(--input-bg);
-            color: var(--text-main); font-family: inherit;
-            font-weight: 600; transition: var(--transition);
-            /* Prevents iOS auto-zoom (must be >= 16px) */
-            font-size: 16px;
-        }
-        .input-wrap input:focus { border-color: var(--primary-solid); box-shadow: 0 0 0 3px rgba(224,191,184,0.1); }
-        .input-wrap input::placeholder { color: #555; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-primary); padding-bottom: 50px; }
         .hidden { display: none !important; }
 
-        .btn-primary {
-            width: 100%; padding: 17px; background: var(--primary-gradient);
-            color: var(--btn-text); border-radius: 14px; font-weight: 900;
-            font-size: 1rem; cursor: pointer; transition: var(--transition);
-            margin-top: 8px; letter-spacing: 0.3px; border: none;
-        }
-        .btn-primary:active { transform: scale(0.97); }
+        /* Container & Header */
+        .header { padding: 20px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; background: var(--bg-color); z-index: 100;}
+        .back-btn { font-size: 24px; color: var(--text-primary); text-decoration: none; margin-right: 15px; }
+        .header h1 { font-size: 20px; font-weight: 600; color: var(--text-accent); }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
-        .btn-outline {
-            width: 100%; padding: 14px; background: transparent; color: var(--text-sub);
-            border: 2px solid var(--border); border-radius: 14px; font-weight: 700;
-            font-size: 0.93rem; cursor: pointer; transition: var(--transition);
-            margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-outline:active { border-color: var(--primary-solid); color: var(--primary-solid); }
-
-        /* ===== DASHBOARD ===== */
-        #dashboard { display: none; }
-        .container { max-width: 620px; margin: 0 auto; padding: 0 8px; }
-        @media (min-width: 640px) { .container { padding: 0 16px; } }
-        @media (min-width: 680px) { .container { padding: 0; } }
-
-        .header {
-            display: flex; align-items: center; padding: 20px 16px;
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(15,15,15,0.92); backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border); margin-bottom: 14px;
-        }
-        .back-btn {
-            width: 44px; height: 44px; display: flex; align-items: center;
-            color: var(--primary-solid); cursor: pointer;
-        }
-        .header-title {
-            flex: 1; text-align: center; font-size: 1rem; font-weight: 900;
-            margin-right: 44px; letter-spacing: 2px; text-transform: uppercase;
-            background: var(--primary-gradient); -webkit-background-clip: text;
-            background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .section-label {
-            font-size: 0.75rem; font-weight: 800; letter-spacing: 2px;
-            text-transform: uppercase; color: var(--text-sub); padding: 0 6px 8px; margin-top: 6px;
-        }
-
-        .card {
-            background: var(--card-bg); border-radius: var(--radius);
-            margin-bottom: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
-        }
-
-        .profile-hero { padding: 32px 24px; display: flex; justify-content: space-between; align-items: center; }
-        .user-name-display { font-size: 1.7rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; }
-        .user-phone-display { font-size: 0.95rem; color: var(--text-sub); margin-top: 6px; font-weight: 600; }
-        .edit-btn {
-            width: 48px; height: 48px; background: var(--input-bg); border-radius: 14px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            color: var(--primary-solid); transition: var(--transition); border: 1px solid var(--border);
-        }
-        .edit-btn:active { transform: scale(0.9); background: var(--primary-gradient); color: var(--btn-text); }
-
-        /* List items */
-        .list-item {
-            display: flex; align-items: center; padding: 18px 18px;
-            border-bottom: 1px solid var(--border); transition: var(--transition); cursor: pointer; min-height: 62px;
-        }
+        /* Cards */
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.4); }
+        .card-title { font-size: 14px; font-weight: 600; color: var(--text-accent); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;}
+        .list-item { padding: 15px 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .list-item:last-child { border-bottom: none; }
-        .list-item:active { background: #252527; }
 
-        .item-icon {
-            width: 40px; height: 40px; background: var(--input-bg); border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 14px; color: var(--text-sub); flex-shrink: 0;
-        }
-        .item-icon.gold { color: var(--primary-solid); }
-        .item-content { flex: 1; min-width: 0; }
-        .item-title { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
-        .item-sub { font-size: 0.8rem; color: var(--text-sub); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .item-right { color: var(--text-sub); opacity: 0.4; flex-shrink: 0; }
-        .action-text { color: var(--primary-solid); font-weight: 800; font-size: 0.95rem; }
+        /* Buttons & Interactions */
+        .btn-primary { background: var(--btn-gradient); color: var(--btn-text); border: none; padding: 15px; border-radius: 12px; font-weight: 700; font-size: 16px; width: 100%; cursor: pointer; margin-top: 15px; transition: transform 0.2s; }
+        .btn-primary:active { transform: scale(0.98); }
+        .text-btn { color: var(--text-accent); font-weight: 600; font-size: 14px; background: none; border: none; cursor: pointer; padding-top: 10px; }
+        .action-text { color: var(--text-primary); font-size: 14px; }
 
-        .small-btn {
-            background: transparent; color: var(--text-sub); cursor: pointer;
-            font-size: 0.78rem; font-weight: 700; border: 1px solid var(--border);
-            border-radius: 8px; padding: 6px 12px; flex-shrink: 0; transition: var(--transition);
-        }
-        .small-btn:active { border-color: var(--primary-solid); color: var(--primary-solid); }
-
-        /* Order action buttons */
-        .order-btns { display: flex; gap: 8px; margin-left: 10px; flex-shrink: 0; }
-        .btn-track {
-            border: 2px solid var(--success); color: var(--success);
-            padding: 9px 14px; border-radius: 10px; font-weight: 800; font-size: 0.8rem;
-            cursor: pointer; transition: var(--transition);
-        }
-        .btn-track:active { background: var(--success); color: white; }
-        .btn-reorder {
-            background: var(--primary-gradient); color: var(--btn-text);
-            padding: 9px 14px; border-radius: 10px; font-weight: 800; font-size: 0.8rem;
-            cursor: pointer; transition: var(--transition); border: none;
-        }
-        .btn-reorder:active { transform: scale(0.95); }
-
-        /* Toggle */
-        .toggle-switch { position: relative; width: 50px; height: 28px; flex-shrink: 0; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 34px; transition: .4s; }
-        .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px; background: white; border-radius: 50%; transition: .4s; }
-        input:checked + .slider { background: linear-gradient(135deg,#E0BFB8,#C89F9C); }
-        input:checked + .slider:before { transform: translateX(22px); background: #121212; }
-
-        /* Accordion */
-        .accordion-header {
-            display: flex; align-items: center; padding: 18px;
-            cursor: pointer; border-bottom: 1px solid var(--border); transition: var(--transition);
-        }
-        .accordion-header:active { background: #252527; }
-        .accordion-body {
-            overflow: hidden; max-height: 0;
-            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); background: #161618;
-        }
-        .accordion-body.open { max-height: 280px; }
-        .payment-option {
-            display: flex; align-items: center; gap: 14px; padding: 16px 20px;
-            cursor: pointer; border-bottom: 1px solid var(--border);
-            transition: var(--transition); font-weight: 600; color: var(--text-sub); font-size: 0.93rem;
-        }
-        .payment-option:last-child { border-bottom: none; }
-        .payment-option:active { color: var(--primary-solid); background: #1a1a1c; }
-        .chv { transition: transform 0.3s ease; flex-shrink: 0; }
-        .chv.open { transform: rotate(90deg); }
-
-        .txn-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 18px; border-bottom: 1px solid var(--border);
-        }
-        .txn-row:last-child { border-bottom: none; }
-        .txn-date { font-size: 0.78rem; color: var(--text-sub); margin-top: 2px; }
-        .txn-amount { font-weight: 800; font-size: 0.95rem; }
-        .txn-status {
-            font-size: 0.72rem; font-weight: 700; padding: 3px 9px;
-            border-radius: 8px; margin-top: 4px; display: inline-block;
-        }
-        .txn-status.paid { background: rgba(76,175,80,0.14); color: var(--success); }
-
-        .btn-logout {
-            width: 100%; padding: 20px; background: none; color: var(--danger);
-            font-size: 1rem; font-weight: 900; cursor: pointer; border: none;
-            transition: var(--transition); letter-spacing: 0.3px;
-        }
-        .btn-logout:active { background: rgba(255,69,58,0.07); }
-
-        .legal-footer { text-align: center; padding: 18px 0 40px; }
-        .legal-footer a { font-size: 0.8rem; color: #555; margin: 0 10px; font-weight: 600; }
-        .legal-footer a:hover { color: var(--primary-solid); }
+        /* Auth Modal Specifics */
+        .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .auth-card { background: var(--card-bg); width: 100%; max-width: 400px; border-radius: 20px; padding: 30px; border: 1px solid var(--border-color); }
+        .input-field { width: 100%; padding: 15px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 10px; margin-bottom: 15px; outline: none; font-size: 16px; }
+        .input-field:focus { border-color: var(--text-accent); }
     </style>
 </head>
 <body>
 
-<!-- ===== TOAST ===== -->
-<div class="toast" id="toast"></div>
-
-<!-- ===== AUTH MODAL ===== -->
-<div class="auth-overlay" id="authOverlay">
-    <div class="auth-card">
-
-        <!-- Back bar: flex-shrink:0 — ALWAYS visible, never pushed off-screen -->
-        <div class="auth-back-bar">
-            <a href="index.html" class="auth-back-link">
-                <svg style="width:17px;height:17px;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-            </a>
-        </div>
-
-        <!-- Tabs: flex-shrink:0 -->
-        <div class="auth-tabs">
-            <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Login</div>
-            <div class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</div>
-        </div>
-
-        <!-- Scrollable form body -->
-        <div class="auth-body">
-
-            <!-- LOGIN -->
-            <div class="form active" id="formLogin">
-                <div class="form-title">Welcome Back &#x2726;</div>
-                <div class="input-wrap">
-                    <label>Mobile Number</label>
-                    <div class="phone-row">
-                        <div class="prefix">+91</div>
-                        <input type="tel" id="loginPhone" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
-                    </div>
-                </div>
-                <button class="btn-primary" onclick="sendOtp('login')">Send OTP</button>
-
-                <div id="loginOtpSection" class="hidden" style="margin-top:22px;">
-                    <div class="input-wrap">
-                        <label>Enter OTP — auto-verifies on 4 digits</label>
-                        <input type="text" id="loginOtp" placeholder="_ _ _ _" maxlength="4"
-                               inputmode="numeric" autocomplete="one-time-code"
-                               oninput="autoVerify('login', this.value)">
-                    </div>
-                    <!-- Fallback button in case auto-verify is slow -->
-                    <button class="btn-primary" onclick="verifyOtp('login')">Verify &amp; Login</button>
-                </div>
+    <div id="auth-section" class="auth-overlay hidden">
+        <div class="auth-card">
+            <h2 style="text-align: center; color: var(--text-accent); margin-bottom: 25px;">Welcome to Quickies</h2>
+            
+            <div id="step-request-otp">
+                <input type="tel" id="mobile-number" class="input-field" placeholder="+91 Enter Mobile Number" autocomplete="off">
+                <button class="btn-primary" onclick="sendOTP()">Send Secure OTP</button>
             </div>
 
-            <!-- SIGN UP -->
-            <div class="form" id="formSignup">
-                <div class="form-title">Join the Elite &#x2726;</div>
-                <div class="input-wrap">
-                    <label>Full Name</label>
-                    <input type="text" id="signupName" placeholder="Your full name" autocomplete="name">
-                </div>
-                <div class="input-wrap">
-                    <label>Mobile Number</label>
-                    <div class="phone-row">
-                        <div class="prefix">+91</div>
-                        <input type="tel" id="signupPhone" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
-                    </div>
-                </div>
-                <div class="input-wrap">
-                    <label>Delivery Address</label>
-                    <input type="text" id="signupAddress" placeholder="Enter address or tap Fetch" autocomplete="street-address">
-                </div>
-                <button class="btn-outline" onclick="fetchLocation()">&#128205; Fetch Live Location</button>
-                <button class="btn-primary" style="margin-top:14px;" onclick="sendOtp('signup')">Send OTP</button>
-
-                <!-- OTP input appears after Send OTP. No separate verify button — auto-verifies -->
-                <div id="signupOtpSection" class="hidden" style="margin-top:22px;">
-                    <div class="input-wrap">
-                        <label>Enter OTP — account created automatically</label>
-                        <input type="text" id="signupOtp" placeholder="_ _ _ _" maxlength="4"
-                               inputmode="numeric" autocomplete="one-time-code"
-                               oninput="autoVerify('signup', this.value)">
-                    </div>
-                </div>
+            <div id="step-verify-otp" class="hidden">
+                <p style="text-align: center; font-size: 14px; margin-bottom: 15px; color: var(--text-accent);">Enter the OTP sent to your number</p>
+                <input type="number" id="otp-input" class="input-field" placeholder="Enter 4-digit OTP" autocomplete="off">
+                <button class="btn-primary" onclick="verifyOTP()">Verify & Login</button>
             </div>
-
         </div>
     </div>
-</div>
 
-<!-- ===== DASHBOARD ===== -->
-<div id="dashboard">
-    <div class="container">
-
+    <div id="profile-section" class="hidden">
         <div class="header">
-            <a href="index.html" class="back-btn">
-                <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <div class="header-title">My Profile</div>
+            <a href="index.html" class="back-btn">←</a>
+            <h1>Executive Profile</h1>
         </div>
 
-        <!-- 1. User Info -->
-        <div class="card profile-hero">
-            <div>
-                <div class="user-name-display" id="dispName">—</div>
-                <div class="user-phone-display" id="dispPhone">—</div>
+        <div class="container">
+            <div class="card" style="text-align: center;">
+                <h2 id="display-name" style="font-size: 24px; margin-bottom: 5px;">Loading...</h2>
+                <p id="display-phone" style="color: var(--text-accent); font-size: 14px; margin-bottom: 15px;">Loading...</p>
+                <button class="text-btn" onclick="editProfile()">Edit Profile Info</button>
             </div>
-            <button class="edit-btn" onclick="editName()" title="Edit Name">
-                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-        </div>
 
-        <!-- 2. Addresses -->
-        <div class="section-label">Saved Locations</div>
-        <div class="card">
-            <div class="list-item">
-                <div class="item-icon gold">
-                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <div class="card">
+                <div class="card-title">Residences</div>
+                <div class="list-item">
+                    <span class="action-text" id="display-address">Corporate HQ (Pending Location)</span>
                 </div>
-                <div class="item-content">
-                    <div class="item-title">Home Residence</div>
-                    <div class="item-sub" id="homeAddress">A-12, Green Park, Bihar, India</div>
-                </div>
-                <button class="small-btn" onclick="editHomeAddress()">Edit</button>
+                <button class="text-btn" onclick="addPrestigiousAddress()">+ Add Prestigious Address</button>
             </div>
-            <div class="list-item">
-                <div class="item-icon">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                </div>
-                <div class="item-content">
-                    <div class="item-title">Corporate HQ</div>
-                    <div class="item-sub" id="corpAddress">Tech Park Plaza, Level 4</div>
-                </div>
-            </div>
-            <div class="list-item" onclick="addNewAddress()">
-                <div class="item-icon gold">
-                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </div>
-                <div class="item-content">
-                    <div class="action-text">+ Add Prestigious Address</div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 3. Orders -->
-        <div class="section-label">Recent Activity</div>
-        <div class="card">
-            <div class="list-item" style="flex-wrap:wrap; gap:10px; align-items:flex-start; padding:20px 18px;">
-                <div class="item-icon gold" style="margin-right:0;">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div class="card">
+                <div class="card-title">Order Command</div>
+                <div class="list-item" onclick="alert('Live tracking encrypted and initialized.')">
+                    <span class="action-text">Track Current Order</span>
+                    <span style="color: var(--text-accent);">➔</span>
                 </div>
-                <div class="item-content" style="margin-left:12px;">
-                    <div class="item-title">Biryani House</div>
-                    <div class="item-sub">Preparing... • ₹320</div>
-                </div>
-                <div class="order-btns">
-                    <button class="btn-track" onclick="alert('Live tracking initialized for current order.')">Track Now</button>
+                <div class="list-item" onclick="alert('Previous order added to cart successfully.')">
+                    <span class="action-text">Request Again</span>
+                    <span style="color: var(--text-accent);">➔</span>
                 </div>
             </div>
-            <div class="list-item" style="flex-wrap:wrap; gap:10px; align-items:flex-start; padding:20px 18px;">
-                <div class="item-icon">
-                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-                <div class="item-content" style="margin-left:12px;">
-                    <div class="item-title">Pizza Central</div>
-                    <div class="item-sub">Delivered • ₹449</div>
-                </div>
-                <div class="order-btns">
-                    <button class="btn-reorder" onclick="alert('Previous items added to cart.')">Request Again</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- 4. Financials -->
-        <div class="section-label">Financials</div>
-        <div class="card">
-            <!-- Payment accordion -->
-            <div>
-                <div class="accordion-header" onclick="toggleAccordion('payments')">
-                    <div class="item-icon" style="margin-right:14px;">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                    </div>
-                    <div class="item-content">
-                        <div class="item-title">Exquisite Payment Methods</div>
-                        <div class="item-sub">UPI, Cards, Net Banking</div>
-                    </div>
-                    <div class="item-right chv" id="chv-payments"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="card">
+                <div class="card-title">Exquisite Payment Methods</div>
+                <div class="list-item" onclick="toggleSection('payment-options')">
+                    <span class="action-text">Manage Options</span>
+                    <span style="color: var(--text-accent);">▼</span>
                 </div>
-                <div class="accordion-body" id="body-payments">
-                    <div class="payment-option" onclick="alert('UPI selected.')">
-                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
-                        UPI
+                <div id="payment-options" class="hidden" style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                    <p style="padding: 8px 0; color: #aaa; font-size: 14px; cursor:pointer;" onclick="alert('UPI Selected')">• Premium UPI</p>
+                    <p style="padding: 8px 0; color: #aaa; font-size: 14px; cursor:pointer;" onclick="alert('Card Selected')">• Black Credit Card</p>
+                    <p style="padding: 8px 0; color: #aaa; font-size: 14px; cursor:pointer;" onclick="alert('Net Banking Selected')">• Elite Net Banking</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Transaction Archives</div>
+                <div class="list-item" onclick="toggleSection('transaction-list')">
+                    <span class="action-text">View Archives</span>
+                    <span style="color: var(--text-accent);">▼</span>
+                </div>
+                <div id="transaction-list" class="hidden" style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                    <div style="display:flex; justify-content:space-between; padding:8px 0; font-size:14px; color:#aaa;">
+                        <span>Order #8821 (Biryani)</span>
+                        <span style="color: var(--text-accent);">₹450</span>
                     </div>
-                    <div class="payment-option" onclick="alert('Card payment selected.')">
-                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                        Credit / Debit Card
-                    </div>
-                    <div class="payment-option" onclick="alert('Net Banking selected.')">
-                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
-                        Net Banking
+                    <div style="display:flex; justify-content:space-between; padding:8px 0; font-size:14px; color:#aaa;">
+                        <span>Order #8705 (Meds)</span>
+                        <span style="color: var(--text-accent);">₹120</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Transaction accordion -->
-            <div>
-                <div class="accordion-header" onclick="toggleAccordion('txn')" style="border-top:1px solid var(--border);">
-                    <div class="item-icon" style="margin-right:14px;">
-                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    </div>
-                    <div class="item-content">
-                        <div class="item-title">Transaction Archives</div>
-                        <div class="item-sub">Past settlements</div>
-                    </div>
-                    <div class="item-right chv" id="chv-txn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-                <div class="accordion-body" id="body-txn">
-                    <div class="txn-row">
-                        <div>
-                            <div style="font-weight:700;font-size:0.93rem;">Biryani House</div>
-                            <div class="txn-date">10 Apr 2026</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div class="txn-amount">₹320</div>
-                            <span class="txn-status paid">Settled</span>
-                        </div>
-                    </div>
-                    <div class="txn-row">
-                        <div>
-                            <div style="font-weight:700;font-size:0.93rem;">Pizza Central</div>
-                            <div class="txn-date">14 Mar 2026</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div class="txn-amount">₹449</div>
-                            <span class="txn-status paid">Settled</span>
-                        </div>
-                    </div>
-                </div>
+            <button class="btn-primary" style="background: transparent; border: 1px solid var(--text-accent); color: var(--text-accent); margin-top: 10px;" onclick="logOut()">Log Out</button>
+            
+            <div style="text-align: center; margin-top: 25px; font-size: 12px; color: #555;">
+                Confidential • Quickies Enterprise © 2026
             </div>
         </div>
-
-        <!-- 5. Preferences -->
-        <div class="section-label">Preferences</div>
-        <div class="card">
-            <label class="list-item" style="cursor:pointer;">
-                <div class="item-icon" style="margin-right:14px;">
-                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </div>
-                <div class="item-content"><div class="item-title">VIP Order Notifications</div></div>
-                <div class="toggle-switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </div>
-            </label>
-        </div>
-
-        <!-- 6. Logout -->
-        <div class="card">
-            <button class="btn-logout" onclick="handleLogout()">Log Out</button>
-        </div>
-
-        <div class="legal-footer">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Use</a>
-        </div>
-
     </div>
-</div>
 
-<script>
-    const SK_USERS = 'quickies_users';
-    const SK_LOGIN = 'quickies_isLoggedIn';
-    const SK_USER  = 'quickies_currentUser';
-
-    // ---- INIT ----
-    window.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem(SK_LOGIN) === 'true') {
-            const u = JSON.parse(localStorage.getItem(SK_USER));
-            showDashboard(u);
-        } else {
-            showAuth();
-        }
-    });
-
-    function showAuth() {
-        document.getElementById('authOverlay').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'none';
-        // Reset OTP fields
-        ['loginOtp','signupOtp'].forEach(id => document.getElementById(id).value = '');
-        document.getElementById('loginOtpSection').classList.add('hidden');
-        document.getElementById('signupOtpSection').classList.add('hidden');
-    }
-
-    function showDashboard(u) {
-        document.getElementById('authOverlay').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        if (u) {
-            document.getElementById('dispName').textContent = u.name || '—';
-            document.getElementById('dispPhone').textContent = '+91 ' + (u.phone || '—');
-        }
-    }
-
-    // ---- TAB SWITCH ----
-    function switchTab(tab) {
-        ['login','signup'].forEach(t => {
-            const tId = 'tab' + t.charAt(0).toUpperCase() + t.slice(1);
-            const fId = 'form' + t.charAt(0).toUpperCase() + t.slice(1);
-            document.getElementById(tId).classList.toggle('active', t === tab);
-            document.getElementById(fId).classList.toggle('active', t === tab);
+    <script>
+        // 1. App Initialization (Check Login State)
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentUser = JSON.parse(localStorage.getItem('quickies_user'));
+            
+            if (currentUser) {
+                // Show Dashboard
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('profile-section').classList.remove('hidden');
+                renderData(currentUser);
+            } else {
+                // Show Login Modal
+                document.getElementById('auth-section').classList.remove('hidden');
+                document.getElementById('profile-section').classList.add('hidden');
+            }
         });
-        // Hide OTP sections on tab switch
-        document.getElementById('loginOtpSection').classList.add('hidden');
-        document.getElementById('signupOtpSection').classList.add('hidden');
-    }
 
-    // ---- TOAST ----
-    function showToast(html) {
-        const t = document.getElementById('toast');
-        t.innerHTML = html;
-        t.classList.add('show');
-        clearTimeout(t._timer);
-        t._timer = setTimeout(() => t.classList.remove('show'), 4200);
-    }
-
-    // ---- SEND OTP ----
-    function sendOtp(type) {
-        const phoneEl = document.getElementById(type === 'login' ? 'loginPhone' : 'signupPhone');
-        const phone = phoneEl.value.trim();
-
-        if (!/^\d{10}$/.test(phone)) {
-            showToast('&#x26A0;&#xFE0F; Enter a valid 10-digit number');
-            phoneEl.focus();
-            return;
-        }
-
-        // Signup: validate fields before sending OTP
-        if (type === 'signup') {
-            const name = document.getElementById('signupName').value.trim();
-            const addr = document.getElementById('signupAddress').value.trim();
-            if (!name) { showToast('&#x26A0;&#xFE0F; Please enter your Full Name'); document.getElementById('signupName').focus(); return; }
-            if (!addr) { showToast('&#x26A0;&#xFE0F; Please enter your Delivery Address'); document.getElementById('signupAddress').focus(); return; }
-
-            // Check duplicate
-            const db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
-            if (db.find(u => u.phone === phone)) {
-                showToast('&#x26A0;&#xFE0F; Number already registered. Please Login.');
-                switchTab('login');
-                document.getElementById('loginPhone').value = phone;
+        // 2. Simulated OTP Flow
+        function sendOTP() {
+            const phoneInput = document.getElementById('mobile-number').value;
+            if(phoneInput.length < 10) {
+                alert("Please enter a valid mobile number.");
                 return;
             }
+            // Show fake OTP alert
+            alert("Your Quickies Secure OTP is: 1234");
+            
+            // Switch to OTP verify step
+            document.getElementById('step-request-otp').classList.add('hidden');
+            document.getElementById('step-verify-otp').classList.remove('hidden');
         }
 
-        showToast('&#x1F4F2; Your Quickies OTP is <span class="otp-badge">1234</span>');
-        const section = document.getElementById(type + 'OtpSection');
-        section.classList.remove('hidden');
-        const otpInput = document.getElementById(type + 'Otp');
-        otpInput.value = '';
-        setTimeout(() => otpInput.focus(), 100);
-    }
-
-    // ---- AUTO-VERIFY (fires on every keystroke, triggers at exactly 4 digits) ----
-    function autoVerify(type, val) {
-        if (val.length === 4) {
-            verifyOtp(type);
-        }
-    }
-
-    // ---- VERIFY OTP ----
-    function verifyOtp(type) {
-        const otp = document.getElementById(type === 'login' ? 'loginOtp' : 'signupOtp').value.trim();
-        if (!otp) { showToast('&#x26A0;&#xFE0F; Please enter the OTP'); return; }
-        if (otp !== '1234') { showToast('&#x274C; Invalid OTP. Hint: 1234'); return; }
-
-        if (type === 'login') {
-            const phone = document.getElementById('loginPhone').value.trim();
-            const db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
-            const user = db.find(u => u.phone === phone);
-            if (!user) {
-                showToast('&#x26A0;&#xFE0F; Number not found. Please Sign Up first!');
-                switchTab('signup');
-                document.getElementById('signupPhone').value = phone;
-                return;
+        function verifyOTP() {
+            const otpInput = document.getElementById('otp-input').value;
+            if(otpInput === "1234") {
+                // Create dummy user for now
+                const user = {
+                    name: "Executive User",
+                    phone: document.getElementById('mobile-number').value,
+                    address: "Corporate HQ"
+                };
+                localStorage.setItem('quickies_user', JSON.stringify(user));
+                window.location.reload(); // Reload to show dashboard
+            } else {
+                alert("Invalid OTP! Please try 1234");
             }
-            localStorage.setItem(SK_LOGIN, 'true');
-            localStorage.setItem(SK_USER, JSON.stringify(user));
-            window.location.href = 'index.html';
-
-        } else {
-            const name    = document.getElementById('signupName').value.trim();
-            const phone   = document.getElementById('signupPhone').value.trim();
-            const address = document.getElementById('signupAddress').value.trim();
-            if (!name || !phone || !address) { showToast('&#x26A0;&#xFE0F; Please fill all fields.'); return; }
-
-            const user = { name, phone, address };
-            const db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
-            db.push(user);
-            localStorage.setItem(SK_USERS, JSON.stringify(db));
-            localStorage.setItem(SK_LOGIN, 'true');
-            localStorage.setItem(SK_USER, JSON.stringify(user));
-            window.location.href = 'index.html';
         }
-    }
 
-    // ---- GEOLOCATION ----
-    function fetchLocation() {
-        if (!navigator.geolocation) { showToast('&#x26A0;&#xFE0F; Geolocation not supported'); return; }
-        showToast('&#x1F4E1; Fetching your location...');
-        navigator.geolocation.getCurrentPosition(
-            pos => {
-                document.getElementById('signupAddress').value =
-                    `Lat ${pos.coords.latitude.toFixed(4)}, Lng ${pos.coords.longitude.toFixed(4)} — Live`;
-                showToast('&#x2705; Location fetched!');
-            },
-            () => {
-                document.getElementById('signupAddress').value = 'Bagaha, Bihar, India 845101';
-                showToast('&#x1F4CD; Default location applied');
+        // 3. Render Profile Data
+        function renderData(user) {
+            document.getElementById('display-name').innerText = user.name;
+            document.getElementById('display-phone').innerText = user.phone;
+            document.getElementById('display-address').innerText = user.address;
+        }
+
+        // 4. Edit Actions
+        function editProfile() {
+            let user = JSON.parse(localStorage.getItem('quickies_user'));
+            let newName = prompt("Enter your new name:", user.name);
+            if(newName) {
+                user.name = newName;
+                localStorage.setItem('quickies_user', JSON.stringify(user));
+                renderData(user);
             }
-        );
-    }
-
-    // ---- DASHBOARD ACTIONS ----
-    function editName() {
-        const user = JSON.parse(localStorage.getItem(SK_USER)) || {};
-        const n = prompt('Update your name:', user.name || '');
-        if (n && n.trim()) {
-            user.name = n.trim();
-            localStorage.setItem(SK_USER, JSON.stringify(user));
-            document.getElementById('dispName').textContent = user.name;
-            showToast('&#x2705; Name updated!');
         }
-    }
 
-    function editHomeAddress() {
-        const curr = document.getElementById('homeAddress').textContent;
-        const n = prompt('Update Home Address:', curr);
-        if (n && n.trim()) {
-            document.getElementById('homeAddress').textContent = n.trim();
-            showToast('&#x2705; Home address updated!');
+        function addPrestigiousAddress() {
+            let user = JSON.parse(localStorage.getItem('quickies_user'));
+            let newAddress = prompt("Enter your prestigious address (e.g., Downtown Penthouse):");
+            if(newAddress) {
+                user.address = newAddress;
+                localStorage.setItem('quickies_user', JSON.stringify(user));
+                renderData(user);
+            }
         }
-    }
 
-    function addNewAddress() {
-        const n = prompt('Enter new address:');
-        if (n && n.trim()) {
-            document.getElementById('corpAddress').textContent = n.trim();
-            showToast('&#x2705; Address saved to Corporate HQ!');
+        // 5. Accordion Toggles
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('hidden');
         }
-    }
 
-    // ---- ACCORDION ----
-    function toggleAccordion(key) {
-        const body = document.getElementById('body-' + key);
-        const chv  = document.getElementById('chv-' + key);
-        const open = body.classList.toggle('open');
-        chv.classList.toggle('open', open);
-    }
-
-    // ---- LOGOUT ----
-    function handleLogout() {
-        if (confirm('Are you sure you want to Log Out?')) {
-            localStorage.setItem(SK_LOGIN, 'false');
-            localStorage.removeItem(SK_USER);
-            showAuth();
+        // 6. Log Out
+        function logOut() {
+            localStorage.removeItem('quickies_user');
+            window.location.reload(); // Reload to show Auth Modal
         }
-    }
-</script>
+    </script>
 </body>
 </html>
