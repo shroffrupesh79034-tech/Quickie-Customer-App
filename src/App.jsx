@@ -51,7 +51,7 @@ const App = () => {
         </div>
 
         <main style={{ flex: 1 }}>
-          <VerticalPage type={currentView} />
+          <VerticalPage key={currentView} type={currentView} />
         </main>
 
         <CartModal isOpen={showCart} onClose={() => setShowCart(false)} />
