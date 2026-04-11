@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Profile - Quickies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF8C00, #FF4500);
+            --primary-solid: #FF6A00;
+            --accent-green: #228B22;
+            --danger-red: #E74C3C;
+            --bg-color: #F5F5F7;
+            --card-bg: #FFFFFF;
+            --text-dark: #1C1C1E;
+            --text-light: #8E8E93;
+            --border-color: #E5E5EA;
+            --shadow-soft: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-hover: 0 8px 25px rgba(255, 106, 0, 0.2);
+            --radius-md: 12px;
+            --transition: all 0.2s ease-in-out;
+            --item-padding: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        button, input, select { font-family: inherit; outline: none; border: none; background: none; }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ----- AUTH MODAL ----- */
+        .auth-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+            display: none; /* Controlled via JS */
+            justify-content: center; align-items: center; z-index: 2000;
+        }
+
+        .auth-card {
+            background: var(--card-bg); width: 90%; max-width: 400px;
+            border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        .auth-tabs { display: flex; border-bottom: 1px solid var(--border-color); }
+        
+        .auth-tab {
+            flex: 1; text-align: center; padding: 18px; font-weight: 600; cursor: pointer; color: var(--text-light); transition: var(--transition); background: #fafafa;
+        }
+        .auth-tab.active { color: var(--primary-solid); border-bottom: 2px solid var(--primary-solid); background: var(--card-bg); }
+
+        .auth-forms-container { padding: 30px 25px; position: relative; }
+        
+        .auth-form { display: none; animation: fadeIn 0.4s ease; }
+        .auth-form.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--text-dark); }
+
+        .input-group { margin-bottom: 16px; text-align: left; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-dark); }
+        .input-group input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit; transition: var(--transition); font-size: 0.95rem; background: #fff;}
+        .input-group input:focus { border-color: var(--primary-solid); box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.1); }
+
+        .btn-auth {
+            width: 100%; padding: 15px; background: var(--primary-gradient); color: white; border-radius: 8px; font-weight: 700; font-size: 1rem; margin-top: 10px; cursor: pointer; box-shadow: var(--shadow-hover); transition: var(--transition);
+        }
+        .btn-auth:active { transform: scale(0.98); box-shadow: none;}
+
+
+        /* ----- PROFILE DASHBOARD ----- */
+        #profileDashboard { display: none; /* Controlled via JS */ }
+
+        .header {
+            display: flex; align-items: center; padding: 20px 15px; background: var(--card-bg); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.02); margin-bottom: 15px;
+        }
+        .btn-back { width: 44px; height: 44px; display: flex; justify-content: flex-start; align-items: center; cursor: pointer; }
+        .header-title { flex: 1; text-align: center; font-size: 1.1rem; font-weight: 600; margin-right: 44px; }
+
+        .card { background: var(--card-bg); border-radius: var(--radius-md); margin: 0 15px 20px; box-shadow: var(--shadow-soft); overflow: hidden; }
+        .card-title { font-size: 0.95rem; font-weight: 700; padding: 20px 15px 10px; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* User Info */
+        .profile-hero { display: flex; align-items: center; padding: 25px 20px; gap: 20px; }
+        .avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .user-details { flex: 1; }
+        .user-name { font-size: 1.3rem; font-weight: 700; color: var(--text-dark); }
+        .user-phone { font-size: 0.9rem; color: var(--text-light); margin-top: 2px;}
+        .btn-edit { width: 44px; height: 44px; background: var(--bg-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: var(--transition); }
+        .btn-edit:hover, .btn-edit:active { background: #ffeae0; color: var(--primary-solid); transform: scale(1.05); }
+
+        /* Lists */
+        .list-item { display: flex; align-items: center; padding: var(--item-padding); border-bottom: 1px solid var(--border-color); transition: var(--transition); cursor: pointer; min-height: 44px; }
+        .list-item:last-child { border-bottom: none; }
+        .list-item:hover, .list-item:active { background-color: #fcfcfd; }
+        
+        .item-icon { width: 24px; height: 24px; margin-right: 15px; color: var(--text-light); display: flex; justify-content: center; align-items: center; }
+        .item-content { flex: 1; }
+        .item-title { font-size: 0.95rem; font-weight: 500; color: var(--text-dark); }
+        .item-title.bold { font-weight: 600; }
+        .item-subtitle { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+        .item-action-text { font-size: 0.9rem; color: var(--primary-solid); font-weight: 600; }
+        .item-right { color: var(--text-light); }
+
+        /* Order Buttons */
+        .btn-track { border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: var(--transition); }
+        .btn-track:hover, .btn-track:active { background: var(--accent-green); color: white; }
+        .btn-reorder { background: var(--primary-gradient); color: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: var(--transition); box-shadow: 0 4px 10px rgba(255,106,0,0.3); }
+        .btn-reorder:hover, .btn-reorder:active { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255,106,0,0.4); }
+
+        /* Toggle */
+        .toggle-switch { position: relative; width: 50px; height: 28px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--accent-green); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .stars { color: #f39c12; letter-spacing: 2px; font-size: 1.1rem;}
+
+        select.lang-select { background: #f0f0f5; padding: 6px 12px; border-radius: 8px; font-weight: 600; color: var(--text-dark); cursor: pointer; }
+        
+        .btn-logout { width: 100%; display: block; padding: 18px; text-align: center; background: var(--card-bg); color: var(--danger-red); font-size: 1rem; font-weight: 700; border-top: 1px solid var(--border-color); cursor: pointer; transition: var(--transition); }
+        .btn-logout:hover, .btn-logout:active { background: #fff5f5; }
+
+        .legal-footer { text-align: center; padding: 10px 0 30px; }
+        .legal-footer a { font-size: 0.8rem; color: var(--text-light); text-decoration: none; margin: 0 8px; transition: color 0.2s; }
+        .legal-footer a:hover { color: var(--text-dark); text-decoration: underline; }
+
+        svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+        .item-icon svg { width: 22px; height: 22px; }
+    </style>
+</head>
+<body>
+
+    <!-- AUTHENTICATION MODAL -->
+    <div class="auth-overlay" id="authModal">
+        <div class="auth-card">
+            
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</div>
+                <div class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</div>
+            </div>
+
+            <!-- Auth Forms -->
+            <div class="auth-forms-container">
+                
+                <!-- Login Form -->
+                <form class="auth-form active" id="formLogin" onsubmit="handleLogin(event)">
+                    <h2 class="form-title">Welcome Back</h2>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn-auth">Login</button>
+                </form>
+
+                <!-- Signup Form -->
+                <form class="auth-form" id="formSignup" onsubmit="handleSignup(event)">
+                    <h2 class="form-title">Create Account</h2>
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signupName" placeholder="John Doe" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" id="signupEmail" placeholder="john@example.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="signupPhone" placeholder="Enter 10-digit number" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="btn-auth">Create Account</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAIN DASHBOARD -->
+    <div id="profileDashboard" style="display:none;">
+        <div class="container">
+            
+            <!-- Header -->
+            <header class="header">
+                <a href="index.html" class="btn-back">
+                    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </a>
+                <div class="header-title">My Profile</div>
+            </header>
+
+            <!-- 1. User Info -->
+            <div class="card profile-hero">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Avatar" class="avatar">
+                <div class="user-details">
+                    <div class="user-name" id="displayUserName">Loading...</div>
+                    <div class="user-phone" id="displayUserPhone">...</div>
+                </div>
+                <button class="btn-edit" aria-label="Edit Profile">
+                    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+            </div>
+
+            <!-- 2. My Address -->
+            <h2 class="card-title">Saved Addresses</h2>
+            <div class="card">
+                <div class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title bold">Home</div>
+                        <div class="item-subtitle">A-12, Green Park, Bihar, India</div>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title bold">Work</div>
+                        <div class="item-subtitle">Tech Park Plaza, Level 4</div>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="item-icon" style="color: var(--primary-solid);"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-action-text">Add New Address</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. My Orders -->
+            <h2 class="card-title">Order Activity</h2>
+            <div class="card">
+                <div class="list-item" style="align-items: flex-start; padding: 20px 15px;">
+                    <div class="item-icon" style="color: var(--primary-solid);"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title bold">Biryani House</div>
+                        <div class="item-subtitle">Preparing your order... • ₹320</div>
+                    </div>
+                    <button class="btn-track">Track Order</button>
+                </div>
+                <div class="list-item" style="align-items: flex-start; padding: 20px 15px;">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title bold">Pizza Central</div>
+                        <div class="item-subtitle">Delivered on 14 Mar • ₹449</div>
+                    </div>
+                    <button class="btn-reorder">Order Again</button>
+                </div>
+            </div>
+
+            <!-- 4. Payment & Order History -->
+            <div class="card">
+                <div class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Saved Payment Methods</div>
+                        <div class="item-subtitle">UPI, Cash on Delivery</div>
+                    </div>
+                    <div class="item-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Full Order History</div>
+                    </div>
+                    <div class="item-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 5. Notifications -->
+            <h2 class="card-title">Preferences</h2>
+            <div class="card">
+                <label class="list-item" style="cursor: pointer;">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Order Updates (WhatsApp & SMS)</div>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 6. Help & Support -->
+            <h2 class="card-title">Help & Support</h2>
+            <div class="card">
+                <a href="tel:6202720120" class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Call Helpline 1</div>
+                        <div class="item-subtitle">+91 6202720120</div>
+                    </div>
+                </a>
+                <a href="tel:7479934891" class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Call Helpline 2</div>
+                        <div class="item-subtitle">+91 7479934891</div>
+                    </div>
+                </a>
+                <a href="https://wa.me/917479934891" target="_blank" class="list-item">
+                    <div class="item-icon" style="color: #25D366;"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">WhatsApp Chat</div>
+                    </div>
+                </a>
+                <a href="mailto:shroffrupesh62027@gmail.com" class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Email Us</div>
+                        <div class="item-subtitle">shroffrupesh62027@gmail.com</div>
+                    </div>
+                </a>
+                <div class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">FAQs</div>
+                    </div>
+                    <div class="item-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 7. Ratings & Reviews -->
+            <div class="card">
+                <div class="list-item">
+                    <div class="item-icon" style="color: #f39c12;"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">My Reviews</div>
+                    </div>
+                    <div class="item-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Rate Previous Orders</div>
+                    </div>
+                    <div class="item-right stars">★★★★★</div>
+                </div>
+            </div>
+
+            <!-- 8. Settings -->
+            <h2 class="card-title">Settings</h2>
+            <div class="card">
+                <div class="list-item">
+                    <div class="item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                    <div class="item-content">
+                        <div class="item-title">Language</div>
+                    </div>
+                    <select class="lang-select">
+                        <option value="en">English</option>
+                        <option value="hi">Hindi</option>
+                    </select>
+                </div>
+                <!-- Logic Handled Logout Button -->
+                <button class="btn-logout" onclick="handleLogout()">Logout</button>
+            </div>
+
+            <!-- 9. Legal -->
+            <div class="legal-footer">
+                <a href="#">Privacy Policy</a> | <a href="#">Terms & Conditions</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT AUTHENTICATION LOGIC ===== -->
+    <script>
+        // 1. Core State
+        const STORAGE_KEY_USERS = 'quickies_users';
+        const STORAGE_KEY_IS_LOGGED_IN = 'quickies_isLoggedIn';
+        const STORAGE_KEY_ACTIVE_USER = 'quickies_currentUser';
+
+        // 2. Initialization Flow
+        window.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = localStorage.getItem(STORAGE_KEY_IS_LOGGED_IN);
+            
+            if (isLoggedIn === 'true') {
+                const currentUser = JSON.parse(localStorage.getItem(STORAGE_KEY_ACTIVE_USER));
+                showDashboard(currentUser);
+            } else {
+                showAuthModal();
+            }
+        });
+
+        // 3. UI Toggles
+        function showAuthModal() {
+            document.getElementById('profileDashboard').style.display = 'none';
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function showDashboard(userObj) {
+            document.getElementById('authModal').style.display = 'none';
+            document.getElementById('profileDashboard').style.display = 'block';
+
+            // Dynamically inject user data
+            if(userObj) {
+                document.getElementById('displayUserName').innerText = userObj.name;
+                document.getElementById('displayUserPhone').innerText = userObj.phone;
+            }
+        }
+
+        // Toggle Login vs Signup Tabs
+        function switchAuthTab(tabType) {
+            // Remove active classes
+            document.getElementById('tabLogin').classList.remove('active');
+            document.getElementById('tabSignup').classList.remove('active');
+            document.getElementById('formLogin').classList.remove('active');
+            document.getElementById('formSignup').classList.remove('active');
+
+            // Apply active classes
+            if (tabType === 'login') {
+                document.getElementById('tabLogin').classList.add('active');
+                document.getElementById('formLogin').classList.add('active');
+            } else {
+                document.getElementById('tabSignup').classList.add('active');
+                document.getElementById('formSignup').classList.add('active');
+            }
+        }
+
+        // 4. SIGN UP LOGIC
+        function handleSignup(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const phone = document.getElementById('signupPhone').value.trim();
+            const password = document.getElementById('signupPassword').value.trim();
+
+            if(!name || !email || !phone || !password) return alert("Please fill all fields!");
+
+            // Fetch DB array
+            let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
+
+            // Check if email already registered
+            const existingUser = usersDb.find(u => u.email === email);
+            if (existingUser) {
+                return alert('Email already registered! Please login.');
+            }
+
+            // Create new user object
+            const newUser = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                phone: phone,
+                password: password,
+                addresses: []
+            };
+
+            // Save to DB
+            usersDb.push(newUser);
+            localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(usersDb));
+
+            // Log them in immediately
+            localStorage.setItem(STORAGE_KEY_IS_LOGGED_IN, 'true');
+            localStorage.setItem(STORAGE_KEY_ACTIVE_USER, JSON.stringify(newUser));
+
+            // Form Reset and Transition
+            document.getElementById('formSignup').reset();
+            showDashboard(newUser);
+        }
+
+        // 5. LOGIN LOGIC
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if(!email || !password) return alert("Please enter email and password!");
+
+            let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
+
+            // Cross-reference credentials
+            const matchedUser = usersDb.find(u => u.email === email && u.password === password);
+
+            if (matchedUser) {
+                // Success
+                localStorage.setItem(STORAGE_KEY_IS_LOGGED_IN, 'true');
+                localStorage.setItem(STORAGE_KEY_ACTIVE_USER, JSON.stringify(matchedUser));
+                
+                document.getElementById('formLogin').reset();
+                showDashboard(matchedUser);
+            } else {
+                // Failed
+                alert('Invalid Email or Password! Please try again.');
+            }
+        }
+
+        // 6. LOGOUT LOGIC
+        function handleLogout() {
+            // Confirm logout
+            const confirmLogout = confirm('Are you sure you want to log out?');
+            if(confirmLogout) {
+                // Wipe session data
+                localStorage.setItem(STORAGE_KEY_IS_LOGGED_IN, 'false');
+                localStorage.removeItem(STORAGE_KEY_ACTIVE_USER);
+                
+                // Force reload page to guarantee fresh state
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
