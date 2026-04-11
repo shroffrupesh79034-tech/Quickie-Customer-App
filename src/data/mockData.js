@@ -18,11 +18,11 @@ export const VERTICALS = {
       { id: 'biryani', name: 'Biryani', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80' },
       { id: 'thali', name: 'Thali', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80' },
       { id: 'rolls', name: 'Rolls', image: 'https://images.unsplash.com/photo-1606502973842-f64bc2785fe5?auto=format&fit=crop&w=800&q=80' },
-      { id: 'paratha', name: 'Paratha', image: 'https://images.unsplash.com/photo-1631557960309-88031e670d8a?auto=format&fit=crop&w=800&q=80' },
-      { id: 'sweets', name: 'Sweets', image: 'https://images.unsplash.com/photo-1630138220038-02488d30e386?auto=format&fit=crop&w=800&q=80' },
-      { id: 'momos', name: 'Momos', image: 'https://images.unsplash.com/photo-1563245330-6d45903c7378?auto=format&fit=crop&w=800&q=80' },
+      { id: 'paratha', name: 'Paratha', image: 'https://images.unsplash.com/photo-1604152135912-04a022e23696?auto=format&fit=crop&w=800&q=80' },
+      { id: 'sweets', name: 'Sweets', image: 'https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80' },
+      { id: 'momos', name: 'Momos', image: 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b4?auto=format&fit=crop&w=800&q=80' },
       { id: 'cakes', name: 'Cakes', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80' },
-      { id: 'shakes', name: 'Shakes', image: 'https://images.unsplash.com/photo-1553784180-4302485711b3?auto=format&fit=crop&w=800&q=80' }
+      { id: 'shakes', name: 'Shakes', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=800&q=80' }
     ],
     products: [
       { id: 101, name: 'Zinger Burger', price: 189, shop: 'Burger Bros', category: 'Burger', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80', rating: 4.5 },
@@ -30,11 +30,11 @@ export const VERTICALS = {
       { id: 103, name: 'Hyderabadi Biryani', price: 320, shop: 'Biryani House', category: 'Biryani', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80', rating: 4.7 },
       { id: 104, name: 'North Indian Thali', price: 250, shop: 'Thali House', category: 'Thali', image: 'https://images.unsplash.com/photo-1601050690597-df056fbec802?auto=format&fit=crop&w=800&q=80', rating: 4.2 },
       { id: 105, name: 'Paneer Roll', price: 120, shop: 'Roll Point', category: 'Rolls', image: 'https://images.unsplash.com/photo-1606502973842-f64bc2785fe5?auto=format&fit=crop&w=800&q=80', rating: 4.4 },
-      { id: 106, name: 'Aloo Paratha', price: 80, shop: 'Paratha Junction', category: 'Paratha', image: 'https://images.unsplash.com/photo-1631557960309-88031e670d8a?auto=format&fit=crop&w=800&q=80', rating: 4.3 },
-      { id: 107, name: 'Gulab Jamun', price: 150, shop: 'Sweet Dreams', category: 'Sweets', image: 'https://images.unsplash.com/photo-1630138220038-02488d30e386?auto=format&fit=crop&w=800&q=80', rating: 4.9 },
+      { id: 106, name: 'Aloo Paratha', price: 80, shop: 'Paratha Junction', category: 'Paratha', image: 'https://images.unsplash.com/photo-1604152135912-04a022e23696?auto=format&fit=crop&w=800&q=80', rating: 4.3 },
+      { id: 107, name: 'Gulab Jamun', price: 150, shop: 'Sweet Dreams', category: 'Sweets', image: 'https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80', rating: 4.9 },
       { id: 108, name: 'Steamed Momos', price: 100, shop: 'Momo Station', category: 'Momos', image: 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b4?auto=format&fit=crop&w=800&q=80', rating: 4.6 },
       { id: 109, name: 'Chocolate Cake', price: 450, shop: 'Cake Walk', category: 'Cakes', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80', rating: 4.7 },
-      { id: 110, name: 'Strawberry Shake', price: 140, shop: 'Shake It Up', category: 'Shakes', image: 'https://images.unsplash.com/photo-1553784180-4302485711b3?auto=format&fit=crop&w=800&q=80', rating: 4.5 }
+      { id: 110, name: 'Choco Shake', price: 140, shop: 'Shake It Up', category: 'Shakes', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=800&q=80', rating: 4.5 }
     ]
   },
   GROCERY: {
@@ -87,15 +87,15 @@ export const VERTICALS = {
     categories: [
       { id: 'fruits', name: 'Fresh Fruits', image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=800&q=80' },
       { id: 'leafy', name: 'Leafy Greens', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80' },
-      { id: 'root', name: 'Root Veggies', image: 'https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&w=800&q=80' },
-      { id: 'exotic', name: 'Exotic Veggies', image: 'https://images.unsplash.com/photo-1566385101042-1a000c1267c4?auto=format&fit=crop&w=800&q=80' },
+      { id: 'root', name: 'Root Veggies', image: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=800&q=80' },
+      { id: 'exotic', name: 'Exotic Veggies', image: 'https://images.unsplash.com/photo-1515471204-69c471bb5aa4?auto=format&fit=crop&w=800&q=80' },
       { id: 'herbs', name: 'Herbs', image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80' }
     ],
     products: [
         { id: 301, name: 'Apples', price: 160, shop: 'Fruit Garden', category: 'Fresh Fruits', image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=800&q=80', rating: 4.9 },
         { id: 302, name: 'Spinach', price: 30, shop: 'Green Farm', category: 'Leafy Greens', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80', rating: 4.7 },
-        { id: 303, name: 'Potatoes', price: 40, shop: 'Root Store', category: 'Root Veggies', image: 'https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&w=800&q=80', rating: 4.5 },
-        { id: 304, name: 'Broccoli', price: 90, shop: 'Exotic Green', category: 'Exotic Veggies', image: 'https://images.unsplash.com/photo-1566385101042-1a000c1267c4?auto=format&fit=crop&w=800&q=80', rating: 4.8 },
+        { id: 303, name: 'Fresh Carrots', price: 40, shop: 'Root Store', category: 'Root Veggies', image: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=800&q=80', rating: 4.5 },
+        { id: 304, name: 'Purple Broccoli', price: 90, shop: 'Exotic Green', category: 'Exotic Veggies', image: 'https://images.unsplash.com/photo-1515471204-69c471bb5aa4?auto=format&fit=crop&w=800&q=80', rating: 4.8 },
         { id: 305, name: 'Coriander', price: 10, shop: 'Herb Garden', category: 'Herbs', image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80', rating: 4.6 }
     ]
   },
