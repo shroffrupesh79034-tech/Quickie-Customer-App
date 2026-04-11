@@ -33,7 +33,7 @@ const App = () => {
         
         <div className="container" style={{ paddingTop: '20px' }}>
           {/* Supreme Tabs Navigation */}
-          <div style={styles.tabGrid}>
+          <div className="nav-tabs-grid" style={styles.tabGrid}>
             {tabs.map(tab => (
               <div 
                 key={tab.id} 
@@ -43,8 +43,8 @@ const App = () => {
                   ...(currentView === tab.id ? styles.tabActive : styles.tabInactive)
                 }}
               >
-                <span style={{ fontSize: '1.2rem' }}>{tab.icon}</span>
-                <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{tab.name}</span>
+                <span style={{ fontSize: '1.4rem' }}>{tab.icon}</span>
+                <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '0.2px' }}>{tab.name}</span>
               </div>
             ))}
           </div>
@@ -63,37 +63,36 @@ const App = () => {
 
 const styles = {
   tabGrid: {
-    display: 'flex',
-    justifyContent: 'center',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)', // Default 4 in a row for web
     gap: '12px',
     marginBottom: '20px',
-    flexWrap: 'wrap',
   },
   tabItem: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column', // Stack icon and text slightly for "mid-large" feel
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    padding: '10px 20px',
-    borderRadius: '100px', // Perfect pill shape
+    gap: '4px',
+    padding: '12px 10px',
+    borderRadius: '16px', // Balanced rounded corner
     cursor: 'pointer',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    boxShadow: 'var(--shadow-soft)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
     border: '1px solid var(--border-color)',
     background: 'white',
-    minWidth: '110px',
+    height: '75px', // Consistent mid-large height
   },
   tabActive: {
     background: 'var(--primary-gradient)',
     color: 'white',
-    transform: 'translateY(-1px)',
+    transform: 'translateY(-2px)',
     border: 'none',
-    boxShadow: '0 6px 12px rgba(255, 75, 43, 0.2)',
+    boxShadow: '0 8px 16px rgba(255, 75, 43, 0.25)',
   },
   tabInactive: {
     color: 'var(--text-main)',
-    fontWeight: 600,
+    fontWeight: 700,
   }
 };
 

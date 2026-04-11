@@ -89,32 +89,43 @@ const VerticalPage = ({ type }) => {
       )}
 
       {/* Section Title */}
-      <h2 style={{ fontSize: '1.6rem', fontWeight: 900, marginBottom: '20px', color: '#1d1d1f' }}>{data.title}</h2>
+      <h1 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '20px', color: '#1d1d1f', letterSpacing: '-0.5px' }}>{data.title}</h1>
 
-      {/* Hero Carousel - Expanded with Arrows */}
+      {/* Hero Carousel - Expanded with Arrows and 2-Side-by-Side on Web */}
       {activeCategory === 'All' && (
         <div style={styles.carouselWrapper}>
-          <button onClick={prevOffer} style={styles.carouselArrowLeft}>
+          <button onClick={prevOffer} style={styles.carouselArrowLeft} className="arrow-active">
             <ChevronLeft size={24} />
           </button>
           <div className="hide-scroll" style={styles.heroScrollContainer}>
-            {data.offers.map((offer, idx) => (
-              <div 
-                key={offer.id} 
-                style={{ 
-                  ...styles.heroCard, 
-                  background: offer.bg,
-                  display: (window.innerWidth < 768 && idx !== currentOffer) ? 'none' : 'flex'
-                }}
-              >
-                <div style={styles.heroContent}>
-                  <h2 style={styles.heroTitleText}>{offer.title}</h2>
-                  <p style={styles.heroDescText}>{offer.desc}</p>
+            {data.offers.map((offer, idx) => {
+              // Logic to show 2 on web, 1 on mobile
+              const isMobile = window.innerWidth < 768;
+              const isVisible = isMobile ? (idx === currentOffer) : (idx === currentOffer || idx === (currentOffer + 1) % data.offers.length);
+              
+              return (
+                <div 
+                  key={offer.id} 
+                  style={{ 
+                    ...styles.heroCard, 
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url(${offer.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    display: isVisible ? 'flex' : (isMobile ? 'none' : 'flex'),
+                    flex: isMobile ? '0 0 100%' : '0 0 calc(50% - 10px)',
+                    opacity: isVisible ? 1 : 0.5,
+                    transform: isVisible ? 'scale(1)' : 'scale(0.98)',
+                  }}
+                >
+                  <div style={styles.heroContent}>
+                    <h2 style={styles.heroTitleText}>{offer.title}</h2>
+                    <p style={styles.heroDescText}>{offer.desc}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-          <button onClick={nextOffer} style={styles.carouselArrowRight}>
+          <button onClick={nextOffer} style={styles.carouselArrowRight} className="arrow-active">
             <ChevronRight size={24} />
           </button>
         </div>
@@ -135,35 +146,48 @@ const VerticalPage = ({ type }) => {
       </div>
 
       {/* Professional Filter - Blinkit-Style */}
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'flex-start', marginBottom: '20px' }}>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'flex-start', marginBottom: '25px' }}>
         <button 
           style={{ ...styles.filterBtn, ...(showFilters ? styles.filterBtnActive : {}) }}
           onClick={() => setShowFilters(!showFilters)}
         >
           <SlidersHorizontal size={18} />
-          <span style={{ fontSize: '1rem' }}>Sort & Filter</span>
+          <span style={{ fontSize: '0.95rem' }}>Sort & Filter</span>
         </button>
 
         {showFilters && (
-          <div style={styles.filterDropdown}>
-            <div style={styles.filterSection}>
-              <h4 style={styles.filterLabel}>Sort By</h4>
-              {['Relevance', 'Fast Delivery', 'Rating', 'Price: Low to High'].map(opt => (
-                <button 
-                  key={opt}
-                  style={{ ...styles.filterOpt, ...(sortBy === opt ? styles.filterOptActive : {}) }}
-                  onClick={() => { setSortBy(opt); setShowFilters(false); }}
-                >
-                  {opt}
-                </button>
-              ))}
+          <>
+            <div style={styles.filterOverlay} onClick={() => setShowFilters(false)} />
+            <div className={`bottom-sheet ${showFilters ? 'open' : ''}`} style={window.innerWidth > 768 ? styles.filterDropdown : {}}>
+              <div style={styles.filterHeader}>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Filters</h3>
+                <button onClick={() => setShowFilters(false)} style={styles.closeBtn}>×</button>
+              </div>
+              
+              <div style={styles.filterSection}>
+                <h4 style={styles.filterLabel}>Sort By</h4>
+                <div style={styles.filterGrid}>
+                  {['Relevance', 'Fast Delivery', 'Rating', 'Price: Low to High', 'Near Restaurant'].map(opt => (
+                    <button 
+                      key={opt}
+                      style={{ ...styles.filterOpt, ...(sortBy === opt ? styles.filterOptActive : {}) }}
+                      onClick={() => { setSortBy(opt); setShowFilters(false); }}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div style={styles.filterSection}>
+                <h4 style={styles.filterLabel}>Quick Toggles</h4>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <button style={styles.filterPill}>Top Rated</button>
+                  <button style={styles.filterPill}>Available Offers</button>
+                </div>
+              </div>
             </div>
-            <div style={styles.filterSection}>
-              <h4 style={styles.filterLabel}>Quick Toggles</h4>
-              <button style={styles.filterOpt}>Top Rated</button>
-              <button style={styles.filterOpt}>Available Offers</button>
-            </div>
-          </div>
+          </>
         )}
       </div>
 
@@ -214,35 +238,37 @@ const styles = {
   },
   carouselArrowLeft: {
     position: 'absolute',
-    left: '-15px',
+    left: '-10px',
     zIndex: 10,
     background: 'white',
     border: 'none',
-    boxShadow: 'var(--shadow-premium)',
-    width: '40px',
-    height: '40px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    width: '44px',
+    height: '44px',
     borderRadius: '50%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     cursor: 'pointer',
     color: 'var(--primary-solid)',
+    transition: 'all 0.2s ease',
   },
   carouselArrowRight: {
     position: 'absolute',
-    right: '-15px',
+    right: '-10px',
     zIndex: 10,
     background: 'white',
     border: 'none',
-    boxShadow: 'var(--shadow-premium)',
-    width: '40px',
-    height: '40px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    width: '44px',
+    height: '44px',
     borderRadius: '50%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     cursor: 'pointer',
     color: 'var(--primary-solid)',
+    transition: 'all 0.2s ease',
   },
   heroScrollContainer: {
     display: 'flex',
@@ -253,14 +279,14 @@ const styles = {
     padding: '10px 0',
   },
   heroCard: {
-    minWidth: 'calc(50% - 10px)', // 2 banners side-by-side on Web
     height: '140px', // Mid-sized height
     borderRadius: '20px',
     display: 'flex',
     alignItems: 'center',
-    padding: '0 30px',
+    padding: '0 25px',
     color: 'white',
     boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+    transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)',
     flexShrink: 0,
   },
   heroContent: {
@@ -268,10 +294,11 @@ const styles = {
     flexDirection: 'column',
   },
   heroTitleText: {
-    fontSize: '1.6rem', // Balanced mid-size
+    fontSize: '1.8rem',
     fontWeight: 900,
     marginBottom: '2px',
     letterSpacing: '-0.5px',
+    textShadow: '0 2px 4px rgba(0,0,0,0.3)',
   },
   heroDescText: {
     fontSize: '0.85rem',
@@ -279,16 +306,16 @@ const styles = {
     opacity: 0.9,
   },
   searchRow: {
-    marginBottom: '15px', 
+    marginBottom: '10px', 
   },
   searchBar: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
     background: 'white',
-    padding: '12px 20px',
-    borderRadius: '15px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    padding: '14px 20px',
+    borderRadius: '16px',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
     border: '1px solid var(--border-color)',
   },
   searchInput: {
@@ -303,69 +330,132 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    padding: '8px 16px',
-    borderRadius: '100px', // Pill shape for filter too
-    border: '1px solid var(--border-color)',
+    padding: '12px 24px',
+    borderRadius: '16px',
+    border: '2px solid var(--border-color)',
     background: 'white',
     color: 'var(--text-main)',
-    fontWeight: 700,
+    fontWeight: 800,
     cursor: 'pointer',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+  },
+  filterBtnActive: {
+    borderColor: 'var(--primary-solid)',
+    color: 'var(--primary-solid)',
+    background: 'rgba(255, 75, 43, 0.05)',
+  },
+  filterOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 1500,
+    background: 'rgba(0,0,0,0.4)',
+    backdropFilter: 'blur(4px)',
   },
   filterDropdown: {
     position: 'absolute',
-    top: '45px',
+    top: '55px',
     left: 0,
-    zIndex: 100,
+    zIndex: 2000,
     background: 'white',
-    borderRadius: '20px',
-    boxShadow: '0 15px 40px rgba(0,0,0,0.15)',
-    padding: '20px',
-    minWidth: '240px',
+    borderRadius: '24px',
+    boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+    padding: '24px',
+    minWidth: '400px',
     border: '1px solid var(--border-color)',
+    transform: 'none', // Override bottom-sheet transform on web
+  },
+  filterHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  closeBtn: {
+    fontSize: '1.8rem',
+    border: 'none',
+    background: 'transparent',
+    cursor: 'pointer',
+    opacity: 0.5,
   },
   filterSection: {
-    marginBottom: '15px',
+    marginBottom: '20px',
   },
   filterLabel: {
-    fontSize: '0.8rem',
+    fontSize: '0.85rem',
     textTransform: 'uppercase',
     color: '#8e8e93',
-    marginBottom: '10px',
+    marginBottom: '12px',
     letterSpacing: '1px',
-    fontWeight: 700,
+    fontWeight: 800,
+  },
+  filterGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '8px',
   },
   filterOpt: {
-    display: 'block',
-    width: '100%',
     textAlign: 'left',
-    padding: '10px 12px',
-    borderRadius: '10px',
-    border: 'none',
+    padding: '12px 16px',
+    borderRadius: '12px',
+    border: '1px solid var(--border-color)',
     background: 'transparent',
     fontSize: '0.95rem',
     fontWeight: 600,
     cursor: 'pointer',
-    transition: 'var(--transition)',
+    transition: 'all 0.2s ease',
   },
   filterOptActive: {
-    background: 'rgba(255, 75, 43, 0.05)',
-    color: 'var(--primary-solid)',
+    background: 'var(--primary-gradient)',
+    color: 'white',
+    border: 'none',
+  },
+  filterPill: {
+    padding: '8px 16px',
+    borderRadius: '100px',
+    border: '1px solid var(--border-color)',
+    background: 'white',
+    fontSize: '0.9rem',
+    fontWeight: 700,
+    cursor: 'pointer',
   },
   categoryRow: {
     display: 'flex',
-    gap: '20px',
+    gap: '24px',
     padding: '10px 0 30px',
+    overflowX: 'auto',
   },
   catCircle: {
-    width: '90px', // Slightly smaller mid-size
-    height: '90px',
+    width: '100px',
+    height: '100px',
     borderRadius: '50%',
     background: 'white',
-    padding: '3px',
-    boxShadow: 'var(--shadow-soft)',
-    border: '3px solid white',
+    padding: '4px',
+    boxShadow: '0 6px 15px rgba(0,0,0,0.08)',
+    border: '2px solid #fff',
     overflow: 'hidden',
+    marginBottom: '10px',
+  },
+  catImg: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    borderRadius: '50%',
+  },
+  catLabel: {
+    fontSize: '0.9rem',
+    fontWeight: 800,
+    color: '#333',
+    textAlign: 'center',
+  },
+  sectionTitle: {
+    fontSize: '1.4rem',
+    fontWeight: 800,
+    marginBottom: '20px',
+    color: '#1d1d1f',
   },
   backBtnSmall: {
     display: 'flex',
@@ -373,10 +463,10 @@ const styles = {
     gap: '6px',
     background: 'white',
     border: '1px solid var(--border-color)',
-    padding: '6px 14px',
+    padding: '8px 16px',
     borderRadius: '100px',
-    fontSize: '0.85rem',
-    fontWeight: 700,
+    fontSize: '0.9rem',
+    fontWeight: 800,
     cursor: 'pointer',
   }
 };
