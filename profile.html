@@ -3,463 +3,567 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Profile - Quickies Premium</title>
+    <title>My Profile — Quickies</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Premium Luxurious Palette */
-            --primary-gradient: linear-gradient(135deg, #E0BFB8, #C89F9C); /* Rose Gold metallic */
-            --primary-solid: #C89F9C;
-            --accent-gold: #DDA7A5; /* Pinkish Gold */
-            --accent-green: #4CAF50;
-            --danger-red: #FF3B30;
-            --bg-color: #121212; /* Premium Matte Black */
-            --card-bg: #1C1C1E; /* Slightly elevated Matte Black */
-            --text-main: #FDF5F5; /* Off-white with pinkish tint */
-            --text-secondary: #D4AFB9; /* Pinkish Gold subtext */
-            --border-color: #2A2A2A; /* Subtle dark separators */
-            --btn-text: #121212; /* Dark contrast for gold buttons */
-            --shadow-premium: 0 10px 30px rgba(0,0,0,0.5);
-            --radius-lg: 20px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --item-padding: 20px;
+            --primary-gradient: linear-gradient(135deg, #E0BFB8, #C89F9C);
+            --primary-solid: #D4AFB9;
+            --btn-text: #121212;
+            --bg: #0F0F0F;
+            --card-bg: #1C1C1E;
+            --input-bg: #252527;
+            --text-main: #FDF5F5;
+            --text-sub: #D4AFB9;
+            --border: #2A2A2A;
+            --success: #4CAF50;
+            --danger: #FF453A;
+            --shadow: 0 12px 40px rgba(0,0,0,0.6);
+            --radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.5;
-            padding-bottom: 40px;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; padding-bottom: 50px; }
         a { text-decoration: none; color: inherit; }
-        ul { list-style: none; }
         button, input { font-family: inherit; outline: none; border: none; background: none; }
+        svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        /* ==================== TOAST ==================== */
+        .toast {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg,#25292e,#1C1C1E); border: 1px solid var(--border);
+            color: var(--text-main); padding: 16px 28px; border-radius: 14px;
+            font-weight: 700; font-size: 0.95rem; z-index: 9999;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7); transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast .otp-badge {
+            display: inline-block; background: var(--primary-gradient); color: var(--btn-text);
+            font-size: 1.3rem; font-weight: 900; padding: 4px 16px; border-radius: 8px; margin-left: 10px;
         }
 
-        /* ----- AUTH MODAL ----- */
+        /* ==================== AUTH MODAL ==================== */
         .auth-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-            display: none;
-            justify-content: center; align-items: center; z-index: 2000;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(18px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
-
         .auth-card {
-            background: var(--card-bg); width: 90%; max-width: 420px;
-            border-radius: var(--radius-lg); box-shadow: var(--shadow-premium);
-            overflow: hidden; display: flex; flex-direction: column;
-            border: 1px solid var(--border-color);
+            width: 92%; max-width: 440px; background: var(--card-bg); border-radius: var(--radius);
+            border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
         }
-
-        .auth-tabs { display: flex; border-bottom: 1px solid var(--border-color); background: #161618; }
-        
+        .auth-tabs { display: flex; background: #161618; border-bottom: 1px solid var(--border); }
         .auth-tab {
-            flex: 1; text-align: center; padding: 22px; font-weight: 700; cursor: pointer; color: var(--text-secondary); transition: var(--transition);
+            flex: 1; padding: 22px; text-align: center; font-weight: 700; cursor: pointer;
+            color: var(--text-sub); transition: var(--transition);
         }
-        .auth-tab.active { 
-            color: var(--primary-solid); 
-            background: var(--card-bg);
-            border-bottom: 3px solid var(--primary-solid);
-        }
+        .auth-tab.active { color: var(--primary-solid); border-bottom: 3px solid var(--primary-solid); background: var(--card-bg); }
+        .auth-body { padding: 32px 28px; }
+        .form { display: none; animation: fadeUp 0.4s ease; }
+        .form.active { display: block; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
-        .auth-forms-container { padding: 35px 30px; }
+        .form-title { font-size: 1.6rem; font-weight: 900; margin-bottom: 24px; text-align: center; letter-spacing: -0.5px; }
         
-        .auth-form { display: none; animation: fadeIn 0.5s ease; }
-        .auth-form.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        .form-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; text-align: center; color: var(--text-main); letter-spacing: -0.5px; }
-
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
-        .input-group input { 
-            width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color); font-family: inherit; 
-            transition: var(--transition); font-size: 1rem; background: #252528; color: white;
+        .input-wrap { margin-bottom: 18px; }
+        .input-wrap label { display: block; font-size: 0.8rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+        .phone-row { display: flex; align-items: center; gap: 10px; }
+        .prefix { background: var(--input-bg); border: 1px solid var(--border); padding: 16px 14px; border-radius: 12px; font-weight: 700; color: var(--text-sub); font-size: 1rem; }
+        .input-wrap input, .input-wrap textarea {
+            width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--border);
+            background: var(--input-bg); color: var(--text-main); font-family: inherit; font-size: 1rem; font-weight: 600;
+            transition: var(--transition);
         }
-        .input-group input:focus { border-color: var(--primary-solid); box-shadow: 0 0 0 3px rgba(224, 191, 184, 0.1); }
+        .input-wrap input:focus, .input-wrap textarea:focus { border-color: var(--primary-solid); box-shadow: 0 0 0 3px rgba(224,191,184,0.12); }
+        .input-wrap input::placeholder { color: #555; }
 
-        .btn-auth {
-            width: 100%; padding: 18px; background: var(--primary-gradient); color: var(--btn-text); border-radius: 12px; font-weight: 800; font-size: 1.05rem; margin-top: 15px; cursor: pointer; transition: var(--transition);
+        .hidden { display: none !important; }
+
+        .btn-primary {
+            width: 100%; padding: 18px; background: var(--primary-gradient); color: var(--btn-text);
+            border-radius: 14px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: var(--transition);
+            margin-top: 6px; letter-spacing: 0.5px;
         }
-        .btn-auth:active { transform: scale(0.97); }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-outline {
+            width: 100%; padding: 15px; background: transparent; color: var(--text-sub);
+            border: 2px solid var(--border); border-radius: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: var(--transition);
+            margin-top: 10px;
+        }
+        .btn-outline:active { border-color: var(--primary-solid); color: var(--primary-solid); }
 
-        /* ----- PROFILE DASHBOARD ----- */
-        #profileDashboard { display: none; }
+        /* ==================== DASHBOARD ==================== */
+        #dashboard { display: none; }
+        .container { max-width: 600px; margin: 0 auto; }
 
         .header {
-            display: flex; align-items: center; padding: 25px 20px; background: var(--bg-color); position: sticky; top: 0; z-index: 100; margin-bottom: 10px;
+            display: flex; align-items: center; padding: 22px 20px;
+            position: sticky; top: 0; z-index: 100; background: rgba(15,15,15,0.9); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border); margin-bottom: 12px;
         }
-        .btn-back { width: 44px; height: 44px; display: flex; justify-content: flex-start; align-items: center; cursor: pointer; color: var(--primary-solid); }
-        .header-title { flex: 1; text-align: center; font-size: 1.2rem; font-weight: 800; margin-right: 44px; color: var(--text-main); }
+        .back-btn { width: 44px; height: 44px; display: flex; align-items: center; color: var(--primary-solid); cursor: pointer; }
+        .header-title { flex: 1; text-align: center; font-size: 1.1rem; font-weight: 900; margin-right: 44px; letter-spacing: 2px; text-transform: uppercase; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .card { background: var(--card-bg); border-radius: var(--radius-lg); margin: 0 15px 20px; box-shadow: var(--shadow-premium); overflow: hidden; border: 1px solid var(--border-color); }
-        .card-title { font-size: 0.85rem; font-weight: 800; padding: 20px 25px 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; }
+        .section-label { font-size: 0.78rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-sub); padding: 0 20px 10px; margin-top: 8px; }
 
-        /* User Info - Avatar Removed as requested */
-        .profile-hero { 
-            display: flex; 
-            align-items: center; 
-            padding: 40px 30px; 
-            gap: 20px;
-            background: linear-gradient(rgba(28,28,30,1), rgba(28,28,30,0.8));
+        .card { background: var(--card-bg); border-radius: var(--radius); margin: 0 15px 18px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+
+        /* Profile Hero */
+        .profile-hero { padding: 36px 28px; display: flex; justify-content: space-between; align-items: center; }
+        .user-name-display { font-size: 2rem; font-weight: 900; letter-spacing: -1px; }
+        .user-phone-display { font-size: 1rem; color: var(--text-sub); margin-top: 6px; font-weight: 600; }
+        .edit-btn {
+            width: 48px; height: 48px; background: var(--input-bg); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary-solid);
+            transition: var(--transition); border: 1px solid var(--border);
         }
-        .user-details { flex: 1; }
-        .user-name { font-size: 1.8rem; font-weight: 900; color: var(--text-main); line-height: 1.2; letter-spacing: -0.5px; }
-        .user-phone { font-size: 1rem; color: var(--text-secondary); margin-top: 4px; font-weight: 600; }
-        
-        .btn-edit { 
-            width: 50px; height: 50px; background: #252528; border-radius: 16px; 
-            display: flex; justify-content: center; align-items: center; cursor: pointer; transition: var(--transition); color: var(--primary-solid);
-        }
-        .btn-edit:active { transform: scale(0.9); background: var(--primary-gradient); color: var(--btn-text); }
+        .edit-btn:active { background: var(--primary-gradient); color: var(--btn-text); }
 
-        /* Lists */
-        .list-item { display: flex; align-items: center; padding: var(--item-padding); border-bottom: 1px solid var(--border-color); transition: var(--transition); cursor: pointer; min-height: 60px; }
+        /* List Items */
+        .list-item { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid var(--border); transition: var(--transition); cursor: pointer; min-height: 64px; }
         .list-item:last-child { border-bottom: none; }
-        .list-item:active { background-color: #252528; }
-        
-        .item-icon { width: 40px; height: 40px; margin-right: 15px; color: var(--text-secondary); display: flex; justify-content: center; align-items: center; background: #252528; border-radius: 12px; }
+        .list-item:active { background: #252527; }
+        .item-icon { width: 42px; height: 42px; background: var(--input-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 16px; color: var(--text-sub); flex-shrink: 0; }
+        .item-icon.gold { color: var(--primary-solid); }
         .item-content { flex: 1; }
-        .item-title { font-size: 1rem; font-weight: 600; color: var(--text-main); }
-        .item-title.bold { font-weight: 800; }
-        .item-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
-        .item-action-text { font-size: 1rem; color: var(--primary-solid); font-weight: 800; }
-        .item-right { color: var(--text-secondary); opacity: 0.5; }
+        .item-title { font-size: 0.98rem; font-weight: 700; color: var(--text-main); }
+        .item-sub { font-size: 0.83rem; color: var(--text-sub); margin-top: 3px; }
+        .item-right { color: var(--text-sub); opacity: 0.5; }
+        .action-text { color: var(--primary-solid); font-weight: 800; font-size: 0.98rem; }
 
-        /* Buttons */
-        .btn-track { border: 2px solid var(--accent-green); color: var(--accent-green); padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; transition: var(--transition); }
-        .btn-track:active { background: var(--accent-green); color: white; }
-        
-        .btn-reorder { background: var(--primary-gradient); color: var(--btn-text); padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; transition: var(--transition); }
+        /* Order Buttons */
+        .order-btns { display: flex; gap: 10px; margin-left: 12px; }
+        .btn-track { border: 2px solid var(--success); color: var(--success); padding: 10px 16px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; cursor: pointer; transition: var(--transition); }
+        .btn-track:active { background: var(--success); color: white; }
+        .btn-reorder { background: var(--primary-gradient); color: var(--btn-text); padding: 10px 16px; border-radius: 12px; font-weight: 800; font-size: 0.82rem; cursor: pointer; transition: var(--transition); }
         .btn-reorder:active { transform: scale(0.95); }
 
         /* Toggle */
-        .toggle-switch { position: relative; width: 50px; height: 28px; }
+        .toggle-switch { position: relative; width: 52px; height: 30px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background: var(--primary-gradient); }
-        input:checked + .slider:before { transform: translateX(22px); background-color: var(--btn-text); }
+        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 34px; transition: .4s; }
+        .slider:before { content: ""; position: absolute; height: 22px; width: 22px; left: 4px; bottom: 4px; background: white; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background: linear-gradient(135deg,#E0BFB8,#C89F9C); }
+        input:checked + .slider:before { transform: translateX(22px); background: #121212; }
 
-        .stars { color: var(--primary-solid); font-size: 1.1rem;}
+        /* Accordion */
+        .accordion-header { display: flex; align-items: center; padding: 20px; cursor: pointer; border-bottom: 1px solid var(--border); transition: var(--transition); }
+        .accordion-header:active { background: #252527; }
+        .accordion-body { overflow: hidden; max-height: 0; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); background: #161618; }
+        .accordion-body.open { max-height: 300px; }
+        .payment-option { display: flex; align-items: center; gap: 14px; padding: 18px 22px; cursor: pointer; border-bottom: 1px solid var(--border); transition: var(--transition); font-weight: 600; color: var(--text-sub); }
+        .payment-option:last-child { border-bottom: none; }
+        .payment-option:active { color: var(--primary-solid); background: #1a1a1c; }
+        .chv { transition: transform 0.3s ease; }
+        .chv.open { transform: rotate(90deg); }
 
-        select.lang-select { background: #252528; padding: 8px 16px; border-radius: 10px; font-weight: 700; color: var(--text-main); cursor: pointer; border: 1px solid var(--border-color); }
-        
-        .btn-logout { width: 100%; display: block; padding: 22px; text-align: center; background: #1c1c1e; color: var(--danger-red); font-size: 1.1rem; font-weight: 800; border: none; cursor: pointer; transition: var(--transition); }
-        .btn-logout:active { background: #2c1a1a; }
+        /* Transactions */
+        .transactions-body { overflow: hidden; max-height: 0; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .transactions-body.open { max-height: 300px; }
+        .txn-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid var(--border); }
+        .txn-row:last-child { border-bottom: none; }
+        .txn-date { font-size: 0.83rem; color: var(--text-sub); }
+        .txn-amount { font-weight: 800; color: var(--text-main); }
+        .txn-status { font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 8px; }
+        .txn-status.paid { background: rgba(76,175,80,0.15); color: var(--success); }
+
+        /* Logout */
+        .btn-logout { width: 100%; padding: 22px; background: none; color: var(--danger); font-size: 1.05rem; font-weight: 900; cursor: pointer; border: none; transition: var(--transition); letter-spacing: 0.3px; }
+        .btn-logout:active { background: rgba(255,69,58,0.08); }
 
         .legal-footer { text-align: center; padding: 20px 0 40px; }
-        .legal-footer a { font-size: 0.85rem; color: var(--text-secondary); text-decoration: none; margin: 0 10px; font-weight: 600; }
+        .legal-footer a { font-size: 0.83rem; color: #555; margin: 0 10px; font-weight: 600; }
         .legal-footer a:hover { color: var(--primary-solid); }
-
-        svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-        .item-icon svg { width: 22px; height: 22px; }
     </style>
 </head>
 <body>
 
-    <!-- AUTHENTICATION MODAL -->
-    <div class="auth-overlay" id="authModal">
-        <div class="auth-card">
-            <div class="auth-tabs">
-                <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</div>
-                <div class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">Register</div>
+<!-- ===================== TOAST ===================== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===================== AUTH MODAL ===================== -->
+<div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+        <div class="auth-tabs">
+            <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Login</div>
+            <div class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</div>
+        </div>
+        <div class="auth-body">
+
+            <!-- LOGIN FORM -->
+            <div class="form active" id="formLogin">
+                <div class="form-title">Welcome Back ✦</div>
+                <div class="input-wrap">
+                    <label>Mobile Number</label>
+                    <div class="phone-row">
+                        <div class="prefix">+91</div>
+                        <input type="tel" id="loginPhone" placeholder="10-digit number" maxlength="10">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="sendOtp('login')">Send OTP</button>
+
+                <div id="loginOtpSection" class="hidden" style="margin-top: 20px;">
+                    <div class="input-wrap">
+                        <label>Enter OTP</label>
+                        <input type="number" id="loginOtp" placeholder="Enter 4-digit OTP">
+                    </div>
+                    <button class="btn-primary" onclick="verifyOtp('login')">Verify & Login</button>
+                </div>
             </div>
-            <div class="auth-forms-container">
-                <form class="auth-form active" id="formLogin" onsubmit="handleLogin(event)">
-                    <h2 class="form-title">Luxurious Welcome</h2>
-                    <div class="input-group">
-                        <label>E-mail Address</label>
-                        <input type="email" id="loginEmail" placeholder="Your royal email" required>
+
+            <!-- SIGNUP FORM -->
+            <div class="form" id="formSignup">
+                <div class="form-title">Join the Elite ✦</div>
+                <div class="input-wrap">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" placeholder="Your full name">
+                </div>
+                <div class="input-wrap">
+                    <label>Mobile Number</label>
+                    <div class="phone-row">
+                        <div class="prefix">+91</div>
+                        <input type="tel" id="signupPhone" placeholder="10-digit number" maxlength="10">
                     </div>
-                    <div class="input-group">
-                        <label>Vault Password</label>
-                        <input type="password" id="loginPassword" placeholder="Your secure key" required>
+                </div>
+                <div class="input-wrap">
+                    <label>Delivery Address</label>
+                    <input type="text" id="signupAddress" placeholder="Enter your address or fetch live">
+                </div>
+                <button class="btn-outline" onclick="fetchLocation()">📍 Fetch Live Location</button>
+                <button class="btn-primary" style="margin-top: 14px;" onclick="sendOtp('signup')">Send OTP</button>
+
+                <div id="signupOtpSection" class="hidden" style="margin-top: 20px;">
+                    <div class="input-wrap">
+                        <label>Enter OTP</label>
+                        <input type="number" id="signupOtp" placeholder="Enter 4-digit OTP">
                     </div>
-                    <button type="submit" class="btn-auth">Enter Dashboard</button>
-                </form>
-                <form class="auth-form" id="formSignup" onsubmit="handleSignup(event)">
-                    <h2 class="form-title">Join the Elite</h2>
-                    <div class="input-group">
-                        <label>Full Name</label>
-                        <input type="text" id="signupName" placeholder="Enter Full Name" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Official Email</label>
-                        <input type="email" id="signupEmail" placeholder="email@premium.com" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Contact Number</label>
-                        <input type="tel" id="signupPhone" placeholder="10 Digit Number" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Set Secure Password</label>
-                        <input type="password" id="signupPassword" placeholder="Create high-security key" required>
-                    </div>
-                    <button type="submit" class="btn-auth">Create Membership</button>
-                </form>
+                    <button class="btn-primary" onclick="verifyOtp('signup')">Verify & Create Account</button>
+                </div>
             </div>
+
         </div>
     </div>
+</div>
 
-    <!-- MAIN DASHBOARD -->
-    <div id="profileDashboard" style="display:none;">
-        <div class="container">
-            <header class="header">
-                <a href="index.html" class="btn-back">
-                    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </a>
-                <div class="header-title">PREMIUM PROFILE</div>
-            </header>
+<!-- ===================== DASHBOARD ===================== -->
+<div id="dashboard">
+    <div class="container">
 
-            <!-- 1. User Info (Avatar Removed as requested) -->
-            <div class="card profile-hero">
-                <div class="user-details">
-                    <div class="user-name" id="displayUserName">Loading...</div>
-                    <div class="user-phone" id="displayUserPhone">...</div>
-                </div>
-                <button class="btn-edit" aria-label="Edit Profile">
-                    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </a>
+            <div class="header-title">My Profile</div>
+        </div>
+
+        <!-- User Info -->
+        <div class="card profile-hero">
+            <div>
+                <div class="user-name-display" id="dispName">—</div>
+                <div class="user-phone-display" id="dispPhone">—</div>
             </div>
+            <button class="edit-btn" onclick="editName()" title="Edit Name">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+        </div>
 
-            <h2 class="card-title">Saved Locations</h2>
-            <div class="card">
-                <div class="list-item">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-title bold">Home Residence</div>
-                        <div class="item-subtitle">A-12, Green Park, Bihar, India</div>
-                    </div>
+        <!-- Addresses -->
+        <div class="section-label">Saved Locations</div>
+        <div class="card">
+            <div class="list-item">
+                <div class="item-icon gold">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </div>
-                <div class="list-item">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-title bold">Corporate HQ</div>
-                        <div class="item-subtitle">Tech Park Plaza, Level 4</div>
-                    </div>
+                <div class="item-content">
+                    <div class="item-title">Home Residence</div>
+                    <div class="item-sub" id="homeAddress">A-12, Green Park, Bihar, India</div>
                 </div>
-                <div class="list-item">
-                    <div class="item-icon" style="color: var(--primary-solid);"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-action-text">Add Prestigious Address</div>
-                    </div>
-                </div>
+                <button style="background:transparent; color: var(--text-sub); cursor: pointer; font-size: 0.82rem; font-weight:700; border:1px solid var(--border); border-radius:8px; padding: 6px 12px;" onclick="editHomeAddress()">Edit</button>
             </div>
-
-            <h2 class="card-title">Recent Activity</h2>
-            <div class="card">
-                <div class="list-item" style="align-items: flex-start; padding: 25px 20px;">
-                    <div class="item-icon" style="color: var(--primary-solid);"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-title bold">Biryani House</div>
-                        <div class="item-subtitle">Preparing with care... • ₹320</div>
-                    </div>
-                    <button class="btn-track">Track Now</button>
+            <div class="list-item">
+                <div class="item-icon">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                 </div>
-                <div class="list-item" style="align-items: flex-start; padding: 25px 20px;">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-title bold">Pizza Central</div>
-                        <div class="item-subtitle">Handled by Concierge • ₹449</div>
-                    </div>
-                    <button class="btn-reorder">Request Again</button>
+                <div class="item-content">
+                    <div class="item-title">Corporate HQ</div>
+                    <div class="item-sub" id="corpAddress">Tech Park Plaza, Level 4</div>
                 </div>
             </div>
+            <div class="list-item" onclick="addNewAddress()">
+                <div class="item-icon gold">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <div class="item-content">
+                    <div class="action-text">+ Add Prestigious Address</div>
+                </div>
+            </div>
+        </div>
 
-            <div class="card">
-                <div class="list-item">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+        <!-- Orders -->
+        <div class="section-label">Recent Activity</div>
+        <div class="card">
+            <div class="list-item" style="flex-wrap: wrap; gap: 12px; align-items: flex-start; padding: 22px 20px;">
+                <div class="item-icon gold" style="margin-right:0;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <div class="item-content" style="margin-left:14px;">
+                    <div class="item-title">Biryani House</div>
+                    <div class="item-sub">Preparing your order... • ₹320</div>
+                </div>
+                <div class="order-btns">
+                    <button class="btn-track" onclick="alert('Live tracking initialized for current order.')">Track Now</button>
+                </div>
+            </div>
+            <div class="list-item" style="flex-wrap: wrap; gap: 12px; align-items: flex-start; padding: 22px 20px;">
+                <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                <div class="item-content" style="margin-left:14px;">
+                    <div class="item-title">Pizza Central</div>
+                    <div class="item-sub">Delivered • ₹449</div>
+                </div>
+                <div class="order-btns">
+                    <button class="btn-reorder" onclick="alert('Previous items added to cart.')">Request Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments -->
+        <div class="section-label">Financials</div>
+        <div class="card">
+            <!-- Payment Accordion -->
+            <div>
+                <div class="accordion-header" onclick="toggleAccordion('payments')">
+                    <div class="item-icon" style="margin-right:16px;">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    </div>
                     <div class="item-content">
                         <div class="item-title">Exquisite Payment Methods</div>
-                        <div class="item-subtitle">Cards, UPI, Concierge Payment</div>
+                        <div class="item-sub">UPI, Cards, Net Banking</div>
                     </div>
-                    <div class="item-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                    <div class="item-right chv" id="chv-payments"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
                 </div>
-                <div class="list-item">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                <div class="accordion-body" id="body-payments">
+                    <div class="payment-option" onclick="alert('UPI selected.')">
+                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+                        UPI
+                    </div>
+                    <div class="payment-option" onclick="alert('Card payment selected.')">
+                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                        Credit / Debit Card
+                    </div>
+                    <div class="payment-option" onclick="alert('Net Banking selected.')">
+                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                        Net Banking
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Archives Accordion -->
+            <div>
+                <div class="accordion-header" onclick="toggleAccordion('txn')" style="border-top: 1px solid var(--border);">
+                    <div class="item-icon" style="margin-right:16px;">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
                     <div class="item-content">
                         <div class="item-title">Transaction Archives</div>
+                        <div class="item-sub">View past settlements</div>
                     </div>
-                    <div class="item-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                    <div class="item-right chv" id="chv-txn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                </div>
+                <div class="transactions-body accordion-body" id="body-txn">
+                    <div class="txn-row">
+                        <div><div style="font-weight:700; font-size:0.95rem;">Biryani House</div><div class="txn-date">10 Apr 2026</div></div>
+                        <div style="text-align:right;"><div class="txn-amount">₹320</div><div class="txn-status paid">Settled</div></div>
+                    </div>
+                    <div class="txn-row">
+                        <div><div style="font-weight:700; font-size:0.95rem;">Pizza Central</div><div class="txn-date">14 Mar 2026</div></div>
+                        <div style="text-align:right;"><div class="txn-amount">₹449</div><div class="txn-status paid">Settled</div></div>
+                    </div>
                 </div>
             </div>
-
-            <h2 class="card-title">Preferences</h2>
-            <div class="card">
-                <label class="list-item" style="cursor: pointer;">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-title">VIP Order Notifications</div>
-                    </div>
-                    <div class="toggle-switch">
-                        <input type="checkbox" checked>
-                        <span class="slider"></span>
-                    </div>
-                </label>
-            </div>
-
-            <h2 class="card-title">Customer Concierge</h2>
-            <div class="card">
-                <a href="tel:6202720120" class="list-item">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-title">Priority Support Line</div>
-                        <div class="item-subtitle">+91 6202720120</div>
-                    </div>
-                </a>
-                <a href="mailto:support@quickies.com" class="list-item">
-                    <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-                    <div class="item-content">
-                        <div class="item-title">Email Correspondence</div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="card">
-                <button class="btn-logout" onclick="handleLogout()">End Session</button>
-            </div>
-
-            <div class="legal-footer">
-                <a href="#">Privacy Protocol</a> <a href="#">Service Terms</a>
-            </div>
         </div>
+
+        <!-- Preferences -->
+        <div class="section-label">Preferences</div>
+        <div class="card">
+            <label class="list-item" style="cursor:pointer;">
+                <div class="item-icon" style="margin-right:16px;">
+                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+                <div class="item-content"><div class="item-title">VIP Order Notifications</div></div>
+                <div class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </div>
+            </label>
+        </div>
+
+        <!-- Logout -->
+        <div class="card">
+            <button class="btn-logout" onclick="handleLogout()">Log Out</button>
+        </div>
+
+        <div class="legal-footer">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+        </div>
+
     </div>
+</div>
 
-    <!-- ===== JAVASCRIPT AUTHENTICATION LOGIC (STRICTLY PRESERVED) ===== -->
-    <script>
-        // 1. Core State
-        const STORAGE_KEY_USERS = 'quickies_users';
-        const STORAGE_KEY_IS_LOGGED_IN = 'quickies_isLoggedIn';
-        const STORAGE_KEY_ACTIVE_USER = 'quickies_currentUser';
+<script>
+    const SK_USERS = 'quickies_users';
+    const SK_LOGIN = 'quickies_isLoggedIn';
+    const SK_USER  = 'quickies_currentUser';
 
-        // 2. Initialization Flow
-        window.addEventListener('DOMContentLoaded', () => {
-            const isLoggedIn = localStorage.getItem(STORAGE_KEY_IS_LOGGED_IN);
-            
-            if (isLoggedIn === 'true') {
-                const currentUser = JSON.parse(localStorage.getItem(STORAGE_KEY_ACTIVE_USER));
-                showDashboard(currentUser);
-            } else {
-                showAuthModal();
-            }
+    // ---- INIT ----
+    window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem(SK_LOGIN) === 'true') {
+            const u = JSON.parse(localStorage.getItem(SK_USER));
+            showDashboard(u);
+        } else {
+            showAuth();
+        }
+    });
+
+    function showAuth() {
+        document.getElementById('authOverlay').style.display = 'flex';
+        document.getElementById('dashboard').style.display = 'none';
+    }
+
+    function showDashboard(u) {
+        document.getElementById('authOverlay').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        if (u) {
+            document.getElementById('dispName').textContent = u.name || '—';
+            document.getElementById('dispPhone').textContent = '+91 ' + (u.phone || '—');
+        }
+    }
+
+    // ---- TABS ----
+    function switchTab(tab) {
+        ['login','signup'].forEach(t => {
+            document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+            document.getElementById('form' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
         });
+        // Hide OTP sections when switching
+        document.getElementById('loginOtpSection').classList.add('hidden');
+        document.getElementById('signupOtpSection').classList.add('hidden');
+    }
 
-        // 3. UI Toggles
-        function showAuthModal() {
-            document.getElementById('profileDashboard').style.display = 'none';
-            document.getElementById('authModal').style.display = 'flex';
+    // ---- TOAST ----
+    function showToast(html) {
+        const t = document.getElementById('toast');
+        t.innerHTML = html;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    // ---- OTP FLOW ----
+    function sendOtp(type) {
+        const phoneId = type === 'login' ? 'loginPhone' : 'signupPhone';
+        const phone = document.getElementById(phoneId).value.trim();
+        if (phone.length !== 10 || isNaN(phone)) {
+            showToast('⚠️ Please enter a valid 10-digit number');
+            return;
         }
+        showToast('📲 Your Quickies OTP is <span class="otp-badge">1234</span>');
+        document.getElementById(type + 'OtpSection').classList.remove('hidden');
+    }
 
-        function showDashboard(userObj) {
-            document.getElementById('authModal').style.display = 'none';
-            document.getElementById('profileDashboard').style.display = 'block';
-
-            // Dynamically inject user data
-            if(userObj) {
-                document.getElementById('displayUserName').innerText = userObj.name;
-                document.getElementById('displayUserPhone').innerText = userObj.phone;
-            }
+    function verifyOtp(type) {
+        const otpId = type === 'login' ? 'loginOtp' : 'signupOtp';
+        const otp = document.getElementById(otpId).value.trim();
+        if (otp !== '1234') {
+            showToast('❌ Invalid OTP. Try again.');
+            return;
         }
-
-        // Toggle Login vs Signup Tabs
-        function switchAuthTab(tabType) {
-            document.getElementById('tabLogin').classList.remove('active');
-            document.getElementById('tabSignup').classList.remove('active');
-            document.getElementById('formLogin').classList.remove('active');
-            document.getElementById('formSignup').classList.remove('active');
-
-            if (tabType === 'login') {
-                document.getElementById('tabLogin').classList.add('active');
-                document.getElementById('formLogin').classList.add('active');
-            } else {
-                document.getElementById('tabSignup').classList.add('active');
-                document.getElementById('formSignup').classList.add('active');
-            }
-        }
-
-        // 4. SIGN UP LOGIC
-        function handleSignup(e) {
-            e.preventDefault();
-            
+        if (type === 'login') {
+            const phone = document.getElementById('loginPhone').value.trim();
+            let db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
+            let user = db.find(u => u.phone === phone);
+            if (!user) { user = { name: 'Member', phone }; }
+            localStorage.setItem(SK_LOGIN, 'true');
+            localStorage.setItem(SK_USER, JSON.stringify(user));
+            showDashboard(user);
+        } else {
             const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim();
             const phone = document.getElementById('signupPhone').value.trim();
-            const password = document.getElementById('signupPassword').value.trim();
-
-            if(!name || !email || !phone || !password) return alert("Please fill all fields!");
-
-            let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
-            const existingUser = usersDb.find(u => u.email === email);
-            if (existingUser) {
-                return alert('Email already registered! Please login.');
-            }
-
-            const newUser = {
-                id: Date.now(),
-                name: name,
-                email: email,
-                phone: phone,
-                password: password,
-                addresses: []
-            };
-
-            usersDb.push(newUser);
-            localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(usersDb));
-
-            localStorage.setItem(STORAGE_KEY_IS_LOGGED_IN, 'true');
-            localStorage.setItem(STORAGE_KEY_ACTIVE_USER, JSON.stringify(newUser));
-
-            document.getElementById('formSignup').reset();
-            showDashboard(newUser);
+            const address = document.getElementById('signupAddress').value.trim();
+            if (!name || !phone || !address) { showToast('⚠️ Please fill all fields.'); return; }
+            const user = { name, phone, address };
+            let db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
+            db.push(user);
+            localStorage.setItem(SK_USERS, JSON.stringify(db));
+            localStorage.setItem(SK_LOGIN, 'true');
+            localStorage.setItem(SK_USER, JSON.stringify(user));
+            showDashboard(user);
         }
+    }
 
-        // 5. LOGIN LOGIC
-        function handleLogin(e) {
-            e.preventDefault();
+    // ---- GEOLOCATION ----
+    function fetchLocation() {
+        if (!navigator.geolocation) { showToast('⚠️ Geolocation not supported.'); return; }
+        showToast('📡 Fetching your live location...');
+        navigator.geolocation.getCurrentPosition(pos => {
+            const addr = `Lat ${pos.coords.latitude.toFixed(4)}, Lng ${pos.coords.longitude.toFixed(4)} — Live`;
+            document.getElementById('signupAddress').value = addr;
+            showToast('✅ Location fetched & filled!');
+        }, () => {
+            document.getElementById('signupAddress').value = 'Bagaha, Bihar, India 845101';
+            showToast('📍 Default location applied');
+        });
+    }
 
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-
-            if(!email || !password) return alert("Please enter email and password!");
-
-            let usersDb = JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
-            const matchedUser = usersDb.find(u => u.email === email && u.password === password);
-
-            if (matchedUser) {
-                localStorage.setItem(STORAGE_KEY_IS_LOGGED_IN, 'true');
-                localStorage.setItem(STORAGE_KEY_ACTIVE_USER, JSON.stringify(matchedUser));
-                
-                document.getElementById('formLogin').reset();
-                showDashboard(matchedUser);
-            } else {
-                alert('Invalid Email or Password! Please try again.');
-            }
+    // ---- DASHBOARD ACTIONS ----
+    function editName() {
+        const user = JSON.parse(localStorage.getItem(SK_USER));
+        const newName = prompt('Enter new name:', user?.name || '');
+        if (newName && newName.trim()) {
+            user.name = newName.trim();
+            localStorage.setItem(SK_USER, JSON.stringify(user));
+            document.getElementById('dispName').textContent = user.name;
+            showToast('✅ Name updated successfully!');
         }
+    }
 
-        // 6. LOGOUT LOGIC
-        function handleLogout() {
-            const confirmLogout = confirm('Are you sure you want to log out of your session?');
-            if(confirmLogout) {
-                localStorage.setItem(STORAGE_KEY_IS_LOGGED_IN, 'false');
-                localStorage.removeItem(STORAGE_KEY_ACTIVE_USER);
-                window.location.reload();
-            }
+    function editHomeAddress() {
+        const curr = document.getElementById('homeAddress').textContent;
+        const newAddr = prompt('Update Home Address:', curr);
+        if (newAddr && newAddr.trim()) {
+            document.getElementById('homeAddress').textContent = newAddr.trim();
+            showToast('✅ Home address updated!');
         }
-    </script>
+    }
+
+    function addNewAddress() {
+        const newAddr = prompt('Enter new address:');
+        if (newAddr && newAddr.trim()) {
+            document.getElementById('corpAddress').textContent = newAddr.trim();
+            showToast('✅ New address added to Corporate HQ!');
+        }
+    }
+
+    // ---- ACCORDION ----
+    function toggleAccordion(key) {
+        const body = document.getElementById('body-' + key);
+        const chv  = document.getElementById('chv-' + key);
+        const isOpen = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        chv.classList.toggle('open', !isOpen);
+    }
+
+    // ---- LOGOUT ----
+    function handleLogout() {
+        if (confirm('Are you sure you want to Log Out?')) {
+            localStorage.setItem(SK_LOGIN, 'false');
+            localStorage.removeItem(SK_USER);
+            // Reset OTP sections
+            document.getElementById('loginOtpSection').classList.add('hidden');
+            document.getElementById('signupOtpSection').classList.add('hidden');
+            document.getElementById('loginPhone').value = '';
+            document.getElementById('loginOtp').value = '';
+            showAuth();
+        }
+    }
+</script>
 </body>
 </html>
