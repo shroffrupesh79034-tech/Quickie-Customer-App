@@ -26,9 +26,9 @@ const Header = ({ onBack, showBack, onOpenCart }) => {
         </div>
 
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button style={styles.iconBtn}>
+          <a href="profile.html" style={styles.iconBtn}>
             <User size={22} />
-          </button>
+          </a>
           <button style={styles.iconBtn} className="cart-btn" onClick={onOpenCart}>
             <ShoppingCart size={22} />
             {cartCount > 0 && <span style={styles.badge}>{cartCount}</span>}
