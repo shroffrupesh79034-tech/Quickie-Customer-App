@@ -1,13 +1,729 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Quickie - All-in-One Super App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quickie - Instant Shop</title>
+<meta name="description" content="India's fastest delivery app — Food, Grocery, Veggies & Medicine.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--pg:linear-gradient(135deg,#FF4B2B,#FF416C);--ps:#FF4B2B;--green:#00b894;--bg:#f8f9fa;--card:#fff;--tm:#2d3436;--ts:#636e72;--bc:#dfe6e9;--rmd:16px;--rlg:24px;--ss:0 10px 30px rgba(0,0,0,.05);--sp:0 15px 35px rgba(255,75,43,.15);--ease:all .4s cubic-bezier(.165,.84,.44,1);--gold:#D4AFB9;--rose:linear-gradient(135deg,#E0BFB8,#C89F9C);--glass:rgba(255,255,255,.72);--gb:rgba(255,255,255,.3);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--tm);overflow-x:hidden;line-height:1.6;}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+.hide-scroll{overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;}
+.hide-scroll::-webkit-scrollbar{display:none;}
+
+/* TOAST */
+#toast{position:fixed;top:22px;left:50%;transform:translateX(-50%) translateY(-120px);background:#1e2025;color:#fff;padding:12px 22px;border-radius:14px;font-weight:700;font-size:.85rem;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;max-width:90vw;text-align:center;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* HEADER — UNCHANGED */
+.header{background:var(--glass);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);position:sticky;top:0;z-index:1000;border-bottom:1px solid var(--gb);padding:15px 0;transition:var(--ease);}
+.header-content{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-size:1.8rem;font-weight:900;background:var(--pg);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;cursor:pointer;}
+.location{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;background:rgba(0,0,0,.04);padding:8px 16px;border-radius:30px;}
+.location svg{color:var(--ps);width:18px;height:18px;}
+.header-actions{display:flex;align-items:center;gap:10px;}
+.icon-btn{width:45px;height:45px;border-radius:50%;background:#fff;display:flex;justify-content:center;align-items:center;position:relative;cursor:pointer;border:1px solid var(--bc);transition:var(--ease);box-shadow:var(--ss);text-decoration:none;color:var(--tm);}
+.icon-btn:hover{transform:translateY(-2px);box-shadow:var(--sp);border-color:var(--ps);color:var(--ps);}
+.cart-badge{position:absolute;top:-5px;right:-5px;background:var(--pg);color:#fff;font-size:.65rem;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+#auth-nav-container a.login-btn{display:inline-flex;align-items:center;padding:9px 18px;background:var(--rose);color:#121212;font-weight:800;font-size:.82rem;border-radius:30px;text-decoration:none;transition:var(--ease);box-shadow:0 4px 16px rgba(212,175,185,.3);white-space:nowrap;}
+#auth-nav-container a.login-btn:hover{transform:translateY(-2px);}
+#auth-nav-container a.user-greeting{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:rgba(212,175,185,.12);border:1.5px solid rgba(212,175,185,.3);color:var(--gold);font-weight:700;font-size:.82rem;border-radius:30px;text-decoration:none;transition:var(--ease);white-space:nowrap;}
+#auth-nav-container a.user-greeting:hover{background:rgba(212,175,185,.2);transform:translateY(-2px);}
+
+/* TABS */
+.pillars-nav{display:flex;gap:15px;padding:25px 0;overflow-x:auto;scrollbar-width:none;}
+.pillars-nav::-webkit-scrollbar{display:none;}
+.pillar-card{min-width:90px;flex:1;background:#fff;border-radius:var(--rlg);padding:18px 10px;text-align:center;box-shadow:var(--ss);transition:var(--ease);cursor:pointer;border:2px solid transparent;user-select:none;}
+.pillar-card.active{background:var(--pg);color:#fff;transform:translateY(-5px);box-shadow:var(--sp);}
+.pillar-icon{font-size:1.5rem;margin-bottom:6px;}
+.pillar-name{font-size:.8rem;font-weight:700;}
+
+/* HERO CAROUSEL */
+.hero-wrap{position:relative;margin-bottom:22px;}
+.hero-carousel{display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding:6px 2px;}
+.hero-carousel::-webkit-scrollbar{display:none;}
+.hero-banner{position:relative;min-width:86%;height:200px;border-radius:20px;overflow:hidden;flex-shrink:0;background-size:cover;background-position:center;cursor:pointer;}
+@media(min-width:768px){.hero-banner{min-width:calc(50% - 7px);}}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(100deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.18) 60%,transparent 100%);display:flex;align-items:center;padding:26px 28px;}
+.hero-badge{display:inline-block;background:var(--pg);color:#fff;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:3px 10px;border-radius:20px;margin-bottom:8px;}
+.hero-content h2{font-size:1.45rem;font-weight:900;color:#fff;line-height:1.15;margin-bottom:4px;}
+.hero-content p{font-size:.8rem;color:rgba(255,255,255,.85);font-weight:600;}
+.hnav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:#fff;border:none;box-shadow:0 4px 16px rgba(0,0,0,.18);display:flex;justify-content:center;align-items:center;cursor:pointer;z-index:10;transition:var(--ease);}
+.hnav:hover{background:var(--ps);color:#fff;transform:translateY(-50%) scale(1.1);}
+.hnav svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.hprev{left:-2px;}.hnext{right:-2px;}
+
+/* SEARCH BAR */
+.search-wrap{position:relative;margin-bottom:14px;}
+.search-wrap svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ts);width:18px;height:18px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
+#searchInput{width:100%;padding:13px 16px 13px 46px;border:2px solid var(--bc);border-radius:14px;font-size:.93rem;font-family:inherit;background:#fff;color:var(--tm);transition:var(--ease);outline:none;box-shadow:var(--ss);}
+#searchInput:focus{border-color:var(--ps);box-shadow:0 0 0 3px rgba(255,75,43,.1);}
+#searchInput::placeholder{color:#bbb;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-trigger{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:2px solid var(--bc);border-radius:10px;background:#fff;font-weight:700;font-size:.82rem;cursor:pointer;transition:var(--ease);box-shadow:var(--ss);color:var(--tm);font-family:inherit;}
+.filter-trigger.active,.filter-trigger:hover{border-color:var(--ps);color:var(--ps);}
+.filter-trigger svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.5;fill:none;}
+.active-chip{display:inline-flex;align-items:center;padding:6px 12px;background:rgba(255,75,43,.08);border:1px solid rgba(255,75,43,.2);border-radius:20px;font-size:.72rem;font-weight:700;color:var(--ps);}
+
+/* FILTER PANEL */
+.f-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:490;}
+.f-overlay.open{display:block;}
+@media(min-width:768px){.f-overlay{display:none!important;}.filter-bar{position:relative;}}
+#filterPanel{position:fixed;bottom:0;left:0;right:0;z-index:500;background:#fff;border-radius:24px 24px 0 0;box-shadow:0 -6px 32px rgba(0,0,0,.12);padding:18px 20px 44px;transform:translateY(110%);transition:transform .35s cubic-bezier(.34,1.56,.64,1);max-height:85vh;overflow-y:auto;}
+#filterPanel.open{transform:translateY(0);}
+@media(min-width:768px){#filterPanel{position:absolute;bottom:auto;top:calc(100% + 6px);left:0;right:auto;width:310px;border-radius:16px;padding:20px;max-height:none;transform:translateY(-8px) scale(.96);opacity:0;pointer-events:none;transition:all .25s ease;}}
+@media(min-width:768px){#filterPanel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all;}}
+.fp-handle{width:40px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 16px;}
+@media(min-width:768px){.fp-handle{display:none;}}
+.fp-title{font-size:1rem;font-weight:800;margin-bottom:14px;}
+.fp-sec{margin-bottom:16px;}
+.fp-lbl{font-size:.7rem;font-weight:800;color:var(--ts);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.fp-opts{display:flex;flex-wrap:wrap;gap:7px;}
+.fp-opt{padding:7px 14px;border:2px solid var(--bc);border-radius:30px;font-weight:700;font-size:.78rem;cursor:pointer;transition:var(--ease);background:#fff;color:var(--tm);font-family:inherit;}
+.fp-opt.sel{background:var(--pg);border-color:transparent;color:#fff;}
+.price-row{display:flex;gap:8px;align-items:center;}
+.price-inp{flex:1;padding:8px 10px;border:2px solid var(--bc);border-radius:10px;font-family:inherit;font-size:.83rem;font-weight:600;outline:none;text-align:center;color:var(--tm);}
+.price-inp:focus{border-color:var(--ps);}
+.tgl-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;}
+.tgl-row:last-child{border:none;}
+.tgl-lbl{font-weight:700;font-size:.85rem;}
+.tgl{position:relative;width:44px;height:24px;flex-shrink:0;}
+.tgl input{opacity:0;width:0;height:0;position:absolute;}
+.tgl-sl{position:absolute;cursor:pointer;inset:0;background:#ddd;border-radius:24px;transition:.3s;}
+.tgl-sl:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+.tgl input:checked+.tgl-sl{background:linear-gradient(135deg,#FF4B2B,#FF416C);}
+.tgl input:checked+.tgl-sl:before{transform:translateX(20px);}
+.fp-apply{width:100%;padding:13px;background:var(--pg);color:#fff;border:none;border-radius:12px;font-weight:800;font-size:.92rem;cursor:pointer;margin-top:14px;font-family:inherit;}
+.fp-reset{width:100%;padding:10px;background:none;border:2px solid var(--bc);color:var(--ts);border-radius:12px;font-weight:700;font-size:.82rem;cursor:pointer;margin-top:8px;font-family:inherit;}
+
+/* CATEGORIES */
+.section-title{font-size:1.2rem;font-weight:800;margin-bottom:16px;}
+.cat-row{display:flex;gap:16px;padding:6px 0 22px;overflow-x:auto;scrollbar-width:none;}
+.cat-row::-webkit-scrollbar{display:none;}
+.cat-item{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:76px;cursor:pointer;transition:var(--ease);}
+.cat-item:hover .cat-ring{transform:scale(1.1) translateY(-4px);border-color:var(--ps);}
+.cat-ring{width:74px;height:74px;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.1);transition:var(--ease);background:#eee;flex-shrink:0;}
+.cat-ring img{width:100%;height:100%;object-fit:cover;display:block;}
+.cat-name{font-size:.73rem;font-weight:700;text-align:center;line-height:1.2;color:var(--tm);}
+
+/* PRODUCT GRID */
+.food-grid{display:grid;gap:16px;margin-bottom:40px;}
+@media(max-width:767px){.food-grid{grid-template-columns:repeat(2,1fr);gap:11px;}}
+@media(min-width:768px) and (max-width:1023px){.food-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:1024px){.food-grid{grid-template-columns:repeat(4,1fr);}}
+.food-card{background:#fff;border-radius:var(--rmd);overflow:hidden;box-shadow:var(--ss);transition:var(--ease);display:flex;flex-direction:column;position:relative;}
+.food-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.08);}
+.food-img-container{width:100%;padding-top:68%;position:relative;overflow:hidden;background:#f5f5f5;}
+.food-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:var(--ease);}
+.food-card:hover .food-img{transform:scale(1.08);}
+.offer-chip{position:absolute;top:8px;left:8px;background:var(--pg);color:#fff;font-size:.58rem;font-weight:800;padding:3px 8px;border-radius:6px;text-transform:uppercase;z-index:1;}
+.food-info{padding:12px;flex:1;display:flex;flex-direction:column;}
+.food-tag{font-size:.6rem;color:var(--ps);font-weight:800;text-transform:uppercase;margin-bottom:2px;letter-spacing:.5px;}
+.food-title{font-size:.86rem;font-weight:700;margin-bottom:4px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.food-rating{font-size:.7rem;margin-bottom:5px;font-weight:700;}
+.food-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:auto;}
+.food-price{font-size:1rem;font-weight:800;color:#1d1d1f;}
+.add-btn{background:#fff;color:var(--green);border:1.5px solid var(--green);padding:6px 14px;border-radius:10px;font-weight:700;cursor:pointer;transition:var(--ease);font-size:.8rem;font-family:inherit;}
+.add-btn:hover{background:var(--green);color:#fff;}
+.qty-ctrl{display:flex;align-items:center;gap:6px;background:var(--green);border-radius:10px;padding:3px 4px;}
+.qty-btn{background:none;border:none;color:#fff;font-size:1rem;font-weight:900;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:.15s;font-family:inherit;}
+.qty-btn:hover{background:rgba(255,255,255,.25);}
+.qty-num{color:#fff;font-weight:800;font-size:.85rem;min-width:16px;text-align:center;}
+
+/* CART MODAL */
+.cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:700;backdrop-filter:blur(4px);}
+.cart-overlay.open{display:flex;align-items:flex-end;justify-content:center;}
+.cart-sheet{background:#fff;width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:20px 20px 40px;max-height:80vh;overflow-y:auto;}
+@media(min-width:600px){.cart-sheet{border-radius:24px;margin:auto;}}
+.cart-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.cart-close{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ts);}
+.cart-item-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f0f0f0;}
+.cart-item-row:last-child{border:none;}
+.ci-name{font-size:.88rem;font-weight:700;flex:1;}
+.ci-price{font-size:.88rem;font-weight:700;margin:0 12px;}
+.cart-total{font-size:1rem;font-weight:800;text-align:right;padding:14px 0 0;}
+.cart-place{width:100%;padding:14px;background:var(--pg);color:#fff;border:none;border-radius:14px;font-weight:800;font-size:.95rem;cursor:pointer;margin-top:12px;font-family:inherit;}
+.cart-empty{text-align:center;padding:40px 0;color:var(--ts);font-weight:700;}
+
+/* ALERT MODAL */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:2000;opacity:0;transition:var(--ease);}
+.modal-overlay.open{display:flex;opacity:1;}
+.custom-alert{background:#fff;width:90%;max-width:420px;border-radius:28px;padding:38px 28px;text-align:center;transform:translateY(30px);transition:var(--ease);}
+.modal-overlay.open .custom-alert{transform:translateY(0);}
+.alert-icon{width:56px;height:56px;background:var(--pg);color:#fff;border-radius:50%;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.alert-title{font-size:1.05rem;font-weight:800;margin-bottom:8px;}
+.alert-msg{font-size:.85rem;color:var(--ts);margin-bottom:22px;line-height:1.5;}
+.alert-actions{display:flex;gap:10px;}
+.alert-btn{flex:1;padding:13px;border-radius:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;font-size:.88rem;}
+.btn-cancel{background:#f1f2f6;color:#2f3542;}
+.btn-confirm{background:var(--pg);color:#fff;}
+
+/* SECTION ROUTING PAGE HEADER */
+.page-hdr{display:flex;align-items:center;gap:14px;margin:20px 0 22px;}
+.back-btn{background:#fff;border:1px solid var(--bc);width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;cursor:pointer;transition:var(--ease);box-shadow:var(--ss);}
+.back-btn:hover{transform:translateX(-3px);}
+.back-btn svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* FILTER TOGGLE (Thali) */
+.filter-container{display:flex;align-items:center;justify-content:center;background:#fff;padding:5px;border-radius:30px;box-shadow:var(--ss);width:fit-content;margin:0 auto 26px;border:1px solid var(--bc);}
+.filter-btn{padding:9px 22px;border-radius:25px;border:none;background:none;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--ease);color:var(--ts);}
+.filter-btn.active{background:var(--pg);color:#fff;box-shadow:var(--sp);}
+
+/* FOOTER */
+.site-footer{background:#1a1a1a;color:#ccc;padding:44px 0 0;}
+.footer-grid{max-width:1200px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:32px;}
+@media(max-width:767px){.footer-grid{grid-template-columns:1fr 1fr;gap:24px;}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr;}}
+.footer-logo{font-size:1.6rem;font-weight:900;background:var(--pg);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.footer-col p{font-size:.8rem;line-height:1.7;color:#aaa;}
+.footer-heading{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:12px;}
+.footer-col a{display:block;font-size:.8rem;color:#aaa;text-decoration:none;margin-bottom:7px;transition:.2s;}
+.footer-col a:hover{color:#fff;}
+.social-row{display:flex;gap:12px;margin-top:14px;}
+.soc-btn{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;transition:var(--ease);cursor:pointer;flex-shrink:0;}
+.soc-btn:hover{transform:translateY(-3px) scale(1.08);}
+.soc-btn.ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);}
+.soc-btn.wa{background:#25D366;}
+.soc-btn.tw{background:#000;}
+.soc-btn svg{width:20px;height:20px;}
+.footer-bottom{max-width:1200px;margin:0 auto;padding:20px 20px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #2a2a2a;margin-top:36px;}
+.footer-bottom p{font-size:.75rem;color:#666;}
+.footer-brand{font-size:.82rem;font-weight:800;color:var(--gold);text-align:right;}
+
+svg{stroke-linecap:round;stroke-linejoin:round;}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- HEADER — UNCHANGED -->
+<header class="header">
+  <div class="container header-content">
+    <div style="display:flex;align-items:center;gap:20px;">
+      <div class="logo" onclick="window.location.hash='home'">Quickie</div>
+      <div class="location">
+        <svg viewBox="0 0 24 24" style="stroke:currentColor;stroke-width:2;fill:none;width:18px;height:18px;">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+        </svg>
+        <div><span>Delivery to </span>Bagaha, India</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div id="auth-nav-container"><a href="profile.html" class="login-btn">Login / Sign Up</a></div>
+      <button class="icon-btn" onclick="openCart()" aria-label="Cart">
+        <svg viewBox="0 0 24 24" style="stroke:currentColor;stroke-width:2.5;fill:none;width:22px;height:22px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <div class="cart-badge" id="cartCount">0</div>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="container">
+  <nav class="pillars-nav hide-scroll" id="pillarsContainer">
+    <div class="pillar-card active" data-tab="food"><div class="pillar-icon">🍔</div><div class="pillar-name">Food</div></div>
+    <div class="pillar-card" data-tab="grocery"><div class="pillar-icon">🛒</div><div class="pillar-name">Grocery</div></div>
+    <div class="pillar-card" data-tab="veggies"><div class="pillar-icon">🍅</div><div class="pillar-name">Veggies</div></div>
+    <div class="pillar-card" data-tab="medicine"><div class="pillar-icon">💊</div><div class="pillar-name">Medicine</div></div>
+  </nav>
+</div>
+
+<!-- MAIN DYNAMIC CONTENT -->
+<div class="container">
+  <div id="mainContent"></div>
+</div>
+
+<!-- FILTER OVERLAY + PANEL -->
+<div class="f-overlay" id="fOverlay" onclick="closeFilter()"></div>
+<div id="filterPanel">
+  <span class="fp-handle"></span>
+  <div class="fp-title">Sort &amp; Filter</div>
+  <div class="fp-sec">
+    <div class="fp-lbl">Sort By</div>
+    <div class="fp-opts" id="sortOpts">
+      <button class="fp-opt sel" data-sort="relevance">Relevance</button>
+      <button class="fp-opt" data-sort="price_asc">Price ↑</button>
+      <button class="fp-opt" data-sort="price_desc">Price ↓</button>
+      <button class="fp-opt" data-sort="rating">Top Rated</button>
+      <button class="fp-opt" data-sort="fast">Fast Delivery</button>
+    </div>
+  </div>
+  <div class="fp-sec">
+    <div class="fp-lbl">Price Range (₹)</div>
+    <div class="price-row">
+      <input class="price-inp" id="minPrice" type="number" placeholder="Min" value="0" min="0">
+      <span style="color:#999;font-weight:700;">—</span>
+      <input class="price-inp" id="maxPrice" type="number" placeholder="Max" value="9999" min="0">
+    </div>
+  </div>
+  <div class="fp-sec">
+    <div class="fp-lbl">Quick Filters</div>
+    <div class="tgl-row">
+      <span class="tgl-lbl">Top Rated ⭐</span>
+      <label class="tgl"><input type="checkbox" id="tglRated"><span class="tgl-sl"></span></label>
+    </div>
+    <div class="tgl-row">
+      <span class="tgl-lbl">Available Offers 🏷️</span>
+      <label class="tgl"><input type="checkbox" id="tglOffers"><span class="tgl-sl"></span></label>
+    </div>
+  </div>
+  <button class="fp-apply" onclick="applyFilter()">Apply Filter</button>
+  <button class="fp-reset" onclick="resetFilter()">Reset All</button>
+</div>
+
+<!-- CART MODAL -->
+<div class="cart-overlay" id="cartOverlay">
+  <div class="cart-sheet">
+    <div class="cart-hdr">
+      <div style="font-size:1.05rem;font-weight:800;">Your Cart 🛒</div>
+      <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div id="cartItems"></div>
+    <div id="cartFooter"></div>
+  </div>
+</div>
+
+<!-- CONFLICT MODAL -->
+<div class="modal-overlay" id="alertModal">
+  <div class="custom-alert">
+    <div class="alert-icon">!</div>
+    <h3 class="alert-title">Multiple Shops</h3>
+    <p class="alert-msg" id="alertMsg">Clear cart to add from a different shop?</p>
+    <div class="alert-actions">
+      <button class="alert-btn btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="alert-btn btn-confirm" id="confirmBtn">Clear &amp; Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-logo">Quickie</div>
+      <p>India's fastest all-in-one delivery app for Food, Grocery, Veggies &amp; Medicine.</p>
+      <div class="social-row">
+        <a class="soc-btn ig" href="https://instagram.com" target="_blank" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff" stroke="none"/></svg>
+        </a>
+        <a class="soc-btn wa" href="https://wa.me/916202720120" target="_blank" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.11-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.93 13.33c-.2.56-1.18 1.07-1.63 1.13-.42.06-.95.08-1.53-.1-.35-.11-.8-.26-1.38-.51-2.41-1.04-3.99-3.47-4.11-3.63-.12-.16-.96-1.28-.96-2.44s.6-1.73.82-1.97c.21-.24.46-.3.62-.3l.44.01c.14 0 .34-.05.53.41.2.48.67 1.64.73 1.76.06.12.1.26.02.42-.08.16-.12.26-.24.4-.12.14-.25.31-.36.42-.12.12-.24.24-.1.47.14.23.62.99 1.33 1.6.91.81 1.68 1.06 1.92 1.18.24.12.38.1.52-.06.14-.16.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.38.65 1.62.77.24.12.4.18.46.28.06.1.06.58-.14 1.14z"/></svg>
+        </a>
+        <a class="soc-btn tw" href="https://twitter.com" target="_blank" aria-label="Twitter/X">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.627 5.905-5.627zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Contact &amp; Support</div>
+      <p>📧 support@quickie.com</p>
+      <p>📞 6202720120</p>
+      <p>📞 7479934891</p>
+      <p>📍 Bagaha, Bihar, India</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Help</div>
+      <a href="#">FAQs</a>
+      <a href="#">Help Centre</a>
+      <a href="#">Support Page</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-heading">Policies</div>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms &amp; Conditions</a>
+      <a href="#">Refund Policy</a>
+      <a href="#">Cancellation Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Quickie Application. All rights reserved.</p>
+    <div class="footer-brand">Quickie developed by Rupesh &amp; Rajveer ⚡</div>
+  </div>
+</footer>
+
+<script>
+// ── AUTH NAV ──────────────────────────────────────
+(function(){
+  try{
+    const u=JSON.parse(localStorage.getItem('quickie_currentUser'));
+    if(u&&u.name&&localStorage.getItem('quickie_isLoggedIn')==='true'){
+      const f=u.name.trim().split(' ')[0];
+      document.getElementById('auth-nav-container').innerHTML=
+        `<a href="profile.html" class="user-greeting"><span>👋</span> Hi, ${f}</a>`;
+    }
+  }catch(e){}
+})();
+
+// ── TAB DATA ─────────────────────────────────────
+const TABS={
+  food:{
+    title:'Top Recommendations',
+    searchHints:["Search 'Biryani'...","Search 'Pizza'...","Search 'Burger'...","Search 'Thali'...","Search 'Momos'..."],
+    heroes:[
+      {badge:'50% OFF',h:'Biryani<br>Bonanza',p:'Use code QUICK50',img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=900&q=80'},
+      {badge:'FREE DELIVERY',h:'Pizza<br>Paradise',p:'Orders above ₹199',img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=900&q=80'},
+      {badge:'BUY 1 GET 1',h:'Burger<br>Mania',p:'On all double patties',img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&q=80'},
+      {badge:'NEW LAUNCH',h:'Fusion<br>Thali',p:'Full meal under ₹199',img:'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=900&q=80'},
+      {badge:'TRENDING',h:'Street<br>Momos',p:'Crispy & Steamed',img:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=900&q=80'}
+    ],
+    categories:[
+      {name:'Burger',img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200'},
+      {name:'Pizza',img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200'},
+      {name:'Biryani',img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200'},
+      {name:'Thali',img:'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=200'},
+      {name:'Rolls',img:'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=200'},
+      {name:'Paratha',img:'https://images.unsplash.com/photo-1631557960309-88031e670d8a?w=200'},
+      {name:'Sweets',img:'https://images.unsplash.com/photo-1630138220038-02488d30e386?w=200'},
+      {name:'Momos',img:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=200'},
+      {name:'Cakes',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200'},
+      {name:'Shakes',img:'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=200'}
+    ],
+    items:[
+      {id:'f1',name:'Zinger Supreme Burger',price:189,shop:'Burger Bros',rating:4.5,fast:true,offer:true,img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500'},
+      {id:'f2',name:'Margherita Gold Pizza',price:299,shop:'Pizza Central',rating:4.3,fast:false,offer:false,img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500'},
+      {id:'f3',name:'Hyderabadi Dum Biryani',price:320,shop:'Biryani House',rating:4.7,fast:true,offer:true,img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500'},
+      {id:'f4',name:'Maharaja Veg Thali',price:349,shop:'Punjabi Dhaba',rating:4.4,fast:false,offer:false,img:'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500'},
+      {id:'f5',name:'Paneer Tikka Roll',price:110,shop:'Roll Station',rating:4.2,fast:true,offer:false,img:'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500'},
+      {id:'f6',name:'Steam Chicken Momos',price:140,shop:'Momo Mia',rating:4.6,fast:true,offer:true,img:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=500'},
+      {id:'f7',name:'Death by Chocolate Cake',price:550,shop:'The Bake Shop',rating:4.8,fast:false,offer:true,img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500'},
+      {id:'f8',name:'Berry Blast Shake',price:180,shop:'Shake It Up',rating:4.3,fast:true,offer:false,img:'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500'}
+    ]
+  },
+  grocery:{
+    title:'Shop Daily Groceries',
+    searchHints:["Search 'Milk'...","Search 'Rice'...","Search 'Bread'...","Search 'Oil'...","Search 'Dal'..."],
+    heroes:[
+      {badge:'MEGA SALE',h:'Grocery<br>Deals',p:'Upto 40% off on staples',img:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=900&q=80'},
+      {badge:'FRESH DAIRY',h:'Milk &<br>Dairy',p:'Farm-fresh delivered daily',img:'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=900&q=80'},
+      {badge:'LOW PRICES',h:'Oils &<br>Spices',p:'Best prices guaranteed',img:'https://images.unsplash.com/photo-1596097635121-14b38c5d7a27?w=900&q=80'},
+      {badge:'SNACK TIME',h:'Snacks &<br>Biscuits',p:'Your favourite brands',img:'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=900&q=80'}
+    ],
+    categories:[
+      {name:'Rice & Grains',img:'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200'},
+      {name:'Dairy',img:'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200'},
+      {name:'Pulses/Dal',img:'https://images.unsplash.com/photo-1585996602879-65f46cf3a14e?w=200'},
+      {name:'Cooking Oil',img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=200'},
+      {name:'Snacks',img:'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=200'},
+      {name:'Masala',img:'https://images.unsplash.com/photo-1596097635121-14b38c5d7a27?w=200'},
+      {name:'Cleaning',img:'https://images.unsplash.com/photo-1585421514738-01798e348b17?w=200'},
+      {name:'Personal Care',img:'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=200'}
+    ],
+    items:[
+      {id:'g1',name:'Tata Premium Basmati Rice 5kg',price:449,shop:'Kirana Store',rating:4.5,fast:true,offer:false,img:'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500'},
+      {id:'g2',name:'Mother Dairy Full Cream Milk 1L',price:68,shop:'Dairy Fresh',rating:4.6,fast:true,offer:false,img:'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500'},
+      {id:'g3',name:'Amul Butter 500g',price:295,shop:'Dairy Fresh',rating:4.7,fast:true,offer:true,img:'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=500'},
+      {id:'g4',name:'Toor Dal 1kg',price:140,shop:'Kirana Store',rating:4.2,fast:false,offer:false,img:'https://images.unsplash.com/photo-1585996602879-65f46cf3a14e?w=500'},
+      {id:'g5',name:'Fortune Sunflower Oil 1L',price:145,shop:'Kirana Store',rating:4.3,fast:true,offer:true,img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500'},
+      {id:'g6',name:"Lay's Classic Chips 52g",price:30,shop:'Snack Zone',rating:4.4,fast:true,offer:false,img:'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500'},
+      {id:'g7',name:'MDH Garam Masala 100g',price:85,shop:'Spice Market',rating:4.6,fast:false,offer:false,img:'https://images.unsplash.com/photo-1596097635121-14b38c5d7a27?w=500'},
+      {id:'g8',name:'Surf Excel Matic 1kg',price:280,shop:'Clean Home',rating:4.1,fast:false,offer:true,img:'https://images.unsplash.com/photo-1585421514738-01798e348b17?w=500'}
+    ]
+  },
+  veggies:{
+    title:'Fresh Fruits & Veggies',
+    searchHints:["Search 'Tomatoes'...","Search 'Onions'...","Search 'Spinach'...","Search 'Bananas'...","Search 'Ginger'..."],
+    heroes:[
+      {badge:'FARM FRESH',h:'Fresh<br>Veggies',p:'Harvested this morning',img:'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=900&q=80'},
+      {badge:'20% OFF',h:'Seasonal<br>Fruits',p:'Mangoes, Berries & More',img:'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=900&q=80'},
+      {badge:'ORGANIC',h:'Green &<br>Healthy',p:'100% pesticide-free',img:'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&q=80'},
+      {badge:'DAILY FRESH',h:'Herbs &<br>Greens',p:'Picked from local farms',img:'https://images.unsplash.com/photo-1515586000433-45406d8e6662?w=900&q=80'}
+    ],
+    categories:[
+      {name:'Fresh Fruits',img:'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=200'},
+      {name:'Leafy Greens',img:'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200'},
+      {name:'Root Veggies',img:'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200'},
+      {name:'Exotic Veggies',img:'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=200'},
+      {name:'Herbs',img:'https://images.unsplash.com/photo-1515586000433-45406d8e6662?w=200'}
+    ],
+    items:[
+      {id:'v1',name:'Fresh Tomatoes 500g',price:30,shop:'Fresh Farm',rating:4.5,fast:true,offer:false,img:'https://images.unsplash.com/photo-1558818498-28c1e002b655?w=500'},
+      {id:'v2',name:'Spinach Bunch 200g',price:20,shop:'Fresh Farm',rating:4.4,fast:true,offer:false,img:'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500'},
+      {id:'v3',name:'Red Onions 1kg',price:38,shop:'Fresh Farm',rating:4.3,fast:false,offer:false,img:'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500'},
+      {id:'v4',name:'Bananas (Dozen)',price:48,shop:'Fruit Corner',rating:4.6,fast:true,offer:true,img:'https://images.unsplash.com/photo-1528825871115-3581a5387919?w=500'},
+      {id:'v5',name:'Fresh Apples 4 pcs',price:90,shop:'Fruit Corner',rating:4.5,fast:true,offer:true,img:'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=500'},
+      {id:'v6',name:'Fresh Ginger 100g',price:20,shop:'Fresh Farm',rating:4.2,fast:false,offer:false,img:'https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=500'},
+      {id:'v7',name:'Garlic Bulb Pack',price:18,shop:'Fresh Farm',rating:4.3,fast:true,offer:false,img:'https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=500'},
+      {id:'v8',name:'Fresh Coriander',price:12,shop:'Fresh Farm',rating:4.4,fast:true,offer:false,img:'https://images.unsplash.com/photo-1618375569909-3c8616cf7733?w=500'}
+    ]
+  },
+  medicine:{
+    title:'Pharmacy & Essentials',
+    searchHints:["Search 'Paracetamol'...","Search 'First Aid'...","Search 'Vitamins'...","Search 'Cough Syrup'...","Search 'Antacid'..."],
+    heroes:[
+      {badge:'24/7 PHARMACY',h:'Medicines<br>Delivered',p:'In 30 minutes',img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=900&q=80'},
+      {badge:'FIRST AID',h:'Emergency<br>Essentials',p:'Always be prepared',img:'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=900&q=80'},
+      {badge:'HEALTH CARE',h:'Vitamins &<br>Supplements',p:'Boost your immunity',img:'https://images.unsplash.com/photo-1550572017-4fcdbb59cc32?w=900&q=80'},
+      {badge:'TRUSTED',h:'OTC<br>Medicines',p:'Genuine products only',img:'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=900&q=80'}
+    ],
+    categories:[
+      {name:'Fever',img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200'},
+      {name:'Cough & Cold',img:'https://images.unsplash.com/photo-1550572017-4fcdbb59cc32?w=200'},
+      {name:'Pain Relief',img:'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200'},
+      {name:'Stomach Care',img:'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=200'},
+      {name:'Diabetes',img:'https://images.unsplash.com/photo-1593106410288-cfbf9d384f57?w=200'},
+      {name:'Syrups',img:'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=200'},
+      {name:'First Aid',img:'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=200'}
+    ],
+    items:[
+      {id:'m1',name:'Crocin 650mg (10 tabs)',price:38,shop:'Apollo Pharmacy',rating:4.7,fast:true,offer:false,img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500'},
+      {id:'m2',name:'Vicks VapoRub 25g',price:95,shop:'Apollo Pharmacy',rating:4.6,fast:true,offer:false,img:'https://images.unsplash.com/photo-1550572017-4fcdbb59cc32?w=500'},
+      {id:'m3',name:'Disprin 325mg (10 tabs)',price:32,shop:'Apollo Pharmacy',rating:4.4,fast:false,offer:false,img:'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=500'},
+      {id:'m4',name:'Eno Fruit Salt 100g',price:72,shop:'Apollo Pharmacy',rating:4.5,fast:true,offer:true,img:'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=500'},
+      {id:'m5',name:'Glucon-D Nimbu 400g',price:115,shop:'Apollo Pharmacy',rating:4.3,fast:false,offer:false,img:'https://images.unsplash.com/photo-1593106410288-cfbf9d384f57?w=500'},
+      {id:'m6',name:'Dettol Antiseptic 250ml',price:125,shop:'Apollo Pharmacy',rating:4.8,fast:true,offer:true,img:'https://images.unsplash.com/photo-1578496479531-32e296d5c6e1?w=500'},
+      {id:'m7',name:'Bandage Roll 5cm',price:50,shop:'Apollo Pharmacy',rating:4.2,fast:true,offer:false,img:'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=500'},
+      {id:'m8',name:'Strepsils Lozenges 12s',price:75,shop:'Apollo Pharmacy',rating:4.4,fast:true,offer:false,img:'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=500'}
+    ]
+  }
+};
+
+// ── STATE ─────────────────────────────────────────
+const S={
+  tab:'food',
+  sort:'relevance',
+  minP:0, maxP:9999,
+  topRated:false, hasOffers:false,
+  cart:{}, // id->qty
+  pending:null
+};
+
+// ── TYPEWRITER ────────────────────────────────────
+let twTimer=null,twIdx=0,twChar=0,twDir=1,twWait=0;
+function startTypewriter(){
+  clearInterval(twTimer);
+  twIdx=0;twChar=0;twDir=1;twWait=0;
+  const inp=document.getElementById('searchInput');
+  if(!inp)return;
+  const hints=TABS[S.tab].searchHints;
+  twTimer=setInterval(()=>{
+    if(document.activeElement===inp)return;
+    if(inp.value!=='')return;
+    if(twWait>0){twWait--;return;}
+    const cur=hints[twIdx%hints.length];
+    if(twDir===1){
+      inp.placeholder=cur.slice(0,twChar++);
+      if(twChar>cur.length){twDir=-1;twWait=18;}
+    } else {
+      inp.placeholder=cur.slice(0,twChar--);
+      if(twChar<0){twChar=0;twDir=1;twIdx++;twWait=6;}
+    }
+  },80);
+}
+
+// ── TOAST ─────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ── CART ──────────────────────────────────────────
+function getCartTotal(){
+  let total=0;
+  for(const tab of Object.values(TABS)){
+    for(const item of tab.items){
+      if(S.cart[item.id]) total+=item.price*(S.cart[item.id]);
+    }
+  }
+  return total;
+}
+function getCartCount(){return Object.values(S.cart).reduce((a,v)=>a+v,0);}
+function updateBadge(){document.getElementById('cartCount').textContent=getCartCount();}
+function getItemById(id){
+  for(const t of Object.values(TABS)){const f=t.items.find(i=>i.id===id);if(f)return f;}
+  return null;
+}
+function changeQty(id,delta){
+  const item=getItemById(id);if(!item)return;
+  const newQ=(S.cart[id]||0)+delta;
+  if(newQ<=0){delete S.cart[id];}else{S.cart[id]=newQ;}
+  updateBadge();
+  // update that card's bottom
+  const b=document.getElementById('cb-'+id);
+  if(b) b.innerHTML=renderCartBottom(id,item);
+}
+function renderCartBottom(id,item){
+  const q=S.cart[id]||0;
+  if(q===0) return `<button class="add-btn" onclick="changeQty('${id}',1)">Add</button>`;
+  return `<div class="qty-ctrl"><button class="qty-btn" onclick="changeQty('${id}',-1)">−</button><span class="qty-num">${q}</span><button class="qty-btn" onclick="changeQty('${id}',1)">+</button></div>`;
+}
+
+function openCart(){
+  const items=Object.keys(S.cart);
+  const el=document.getElementById('cartItems');
+  const ft=document.getElementById('cartFooter');
+  if(!items.length){
+    el.innerHTML='<div class="cart-empty">🛒 Your cart is empty!</div>';
+    ft.innerHTML='';
+  } else {
+    let html='',total=0;
+    for(const id of items){
+      const item=getItemById(id);if(!item)continue;
+      const sub=item.price*S.cart[id];total+=sub;
+      html+=`<div class="cart-item-row"><span class="ci-name">${item.name} ×${S.cart[id]}</span><span class="ci-price">₹${sub}</span></div>`;
+    }
+    el.innerHTML=html;
+    ft.innerHTML=`<div class="cart-total">Total: ₹${total}</div><button class="cart-place" onclick="placeOrder()">Place Order 🚀</button>`;
+  }
+  document.getElementById('cartOverlay').classList.add('open');
+}
+function closeCart(){document.getElementById('cartOverlay').classList.remove('open');}
+function placeOrder(){
+  S.cart={};updateBadge();closeCart();
+  showToast('🎉 Order placed! Delivering in 30 mins.');
+}
+
+// ── FILTER ────────────────────────────────────────
+function openFilter(){
+  document.getElementById('filterPanel').classList.add('open');
+  document.getElementById('fOverlay').classList.add('open');
+}
+function closeFilter(){
+  document.getElementById('filterPanel').classList.remove('open');
+  document.getElementById('fOverlay').classList.remove('open');
+}
+document.getElementById('sortOpts').addEventListener('click',e=>{
+  const opt=e.target.closest('.fp-opt');if(!opt)return;
+  document.querySelectorAll('#sortOpts .fp-opt').forEach(o=>o.classList.remove('sel'));
+  opt.classList.add('sel');
+  S.sort=opt.dataset.sort;
+});
+function applyFilter(){
+  S.minP=parseInt(document.getElementById('minPrice').value)||0;
+  S.maxP=parseInt(document.getElementById('maxPrice').value)||9999;
+  S.topRated=document.getElementById('tglRated').checked;
+  S.hasOffers=document.getElementById('tglOffers').checked;
+  closeFilter();renderGrid();
+}
+function resetFilter(){
+  S.sort='relevance';S.minP=0;S.maxP=9999;S.topRated=false;S.hasOffers=false;
+  document.querySelectorAll('#sortOpts .fp-opt').forEach(o=>o.classList.remove('sel'));
+  document.querySelector('#sortOpts .fp-opt[data-sort="relevance"]').classList.add('sel');
+  document.getElementById('minPrice').value=0;
+  document.getElementById('maxPrice').value=9999;
+  document.getElementById('tglRated').checked=false;
+  document.getElementById('tglOffers').checked=false;
+  closeFilter();renderGrid();
+}
+window.applyFilter=applyFilter;
+window.resetFilter=resetFilter;
+
+// ── CONFLICT MODAL ────────────────────────────────
+const alertModal=document.getElementById('alertModal');
+function closeModal(){alertModal.classList.remove('open');setTimeout(()=>alertModal.style.display='none',300);}
+window.closeModal=closeModal;
+
+// ── RENDERING ─────────────────────────────────────
+function getFilteredItems(){
+  let items=[...TABS[S.tab].items];
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  if(q) items=items.filter(i=>i.name.toLowerCase().includes(q));
+  items=items.filter(i=>i.price>=S.minP&&i.price<=S.maxP);
+  if(S.topRated) items=items.filter(i=>i.rating>=4.5);
+  if(S.hasOffers) items=items.filter(i=>i.offer);
+  if(S.sort==='price_asc') items.sort((a,b)=>a.price-b.price);
+  else if(S.sort==='price_desc') items.sort((a,b)=>b.price-a.price);
+  else if(S.sort==='rating') items.sort((a,b)=>b.rating-a.rating);
+  else if(S.sort==='fast') items=items.filter(i=>i.fast);
+  return items;
+}
+
+function renderHeroes(){
+  const d=TABS[S.tab];
+  return `<div class="hero-wrap">
+    <button class="hnav hprev" onclick="scrollHero(-1)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="hero-carousel" id="heroC">
+      ${d.heroes.map(h=>`<div class="hero-banner" style="background-image:url('${h.img}')">
+        <div class="hero-ov"><div class="hero-content">
+          <div class="hero-badge">${h.badge}</div>
+          <h2>${h.h}</h2><p>${h.p}</p>
+        </div></div></div>`).join('')}
+    </div>
+    <button class="hnav hnext" onclick="scrollHero(1)"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>`;
+}
+
+window.scrollHero=function(d){
+  const c=document.getElementById('heroC');
+  if(c)c.scrollBy({left:c.offsetWidth*0.85*d,behavior:'smooth'});
+};
+
+function renderCategories(){
+  const d=TABS[S.tab];
+  return `<h3 class="section-title">${S.tab==='food'?'Order our Best Food':d.title}</h3>
+  <div class="cat-row">
+    ${d.categories.map(c=>`<div class="cat-item"><div class="cat-ring"><img src="${c.img}" alt="${c.name}" loading="lazy"></div><div class="cat-name">${c.name}</div></div>`).join('')}
+  </div>`;
+}
+
+function renderGrid(){
+  const items=getFilteredItems();
+  const grid=document.getElementById('productGrid');
+  if(!grid)return;
+  if(!items.length){grid.innerHTML='<p style="color:#888;text-align:center;padding:40px;grid-column:1/-1;">No items found. Try a different filter.</p>';return;}
+  grid.innerHTML=items.map(item=>{
+    const stars='⭐'.repeat(Math.round(item.rating));
+    return `<div class="food-card">
+      <div class="food-img-container">
+        <img class="food-img" src="${item.img}" alt="${item.name}" loading="lazy">
+        ${item.offer?'<div class="offer-chip">🏷️ Offer</div>':''}
+      </div>
+      <div class="food-info">
+        <div class="food-tag">${item.shop}${item.fast?' · ⚡Fast':''}</div>
+        <div class="food-title">${item.name}</div>
+        <div class="food-rating">${stars} ${item.rating}</div>
+        <div class="food-bottom">
+          <div class="food-price">₹${item.price}</div>
+          <div id="cb-${item.id}">${renderCartBottom(item.id,item)}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTab(){
+  const d=TABS[S.tab];
+  document.getElementById('mainContent').innerHTML=`
+    ${renderHeroes()}
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="searchInput" type="text" placeholder="Search..." autocomplete="off" oninput="renderGrid()">
+    </div>
+    <div class="filter-bar">
+      <button class="filter-trigger" onclick="openFilter()">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none" width="16" height="16"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        Sort &amp; Filter
+      </button>
+    </div>
+    ${renderCategories()}
+    <h3 class="section-title">${d.title}</h3>
+    <div class="food-grid" id="productGrid"></div>
+  `;
+  renderGrid();
+  startTypewriter();
+}
+
+// ── TAB SWITCHING ─────────────────────────────────
+document.getElementById('pillarsContainer').addEventListener('click',e=>{
+  const card=e.target.closest('.pillar-card');if(!card)return;
+  const tab=card.dataset.tab;if(!tab||tab===S.tab)return;
+  document.querySelectorAll('.pillar-card').forEach(c=>c.classList.remove('active'));
+  card.classList.add('active');
+  S.tab=tab;
+  // state reset
+  S.sort='relevance';S.minP=0;S.maxP=9999;S.topRated=false;S.hasOffers=false;
+  renderTab();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+// ── INIT ──────────────────────────────────────────
+renderTab();
+</script>
+</body>
 </html>

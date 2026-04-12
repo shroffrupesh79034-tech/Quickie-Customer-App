@@ -1,83 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Profile — Quickies</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>My Profile — Quickie</title>
+    <meta name="description" content="Manage your Quickie profile, addresses, orders and payments.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #E0BFB8, #C89F9C);
-            --primary-solid: #D4AFB9;
+            --grad: linear-gradient(135deg, #E0BFB8, #C89F9C);
+            --gold: #D4AFB9;
             --btn-text: #121212;
             --bg: #0F0F0F;
-            --card-bg: #1C1C1E;
-            --input-bg: #252527;
-            --text-main: #FDF5F5;
-            --text-sub: #D4AFB9;
+            --card: #1C1C1E;
+            --input: #252527;
+            --text: #FDF5F5;
+            --sub: #A09098;
             --border: #2A2A2A;
-            --success: #4CAF50;
+            --success: #30D158;
             --danger: #FF453A;
-            --shadow: 0 12px 40px rgba(0,0,0,0.6);
-            --radius: 20px;
-            --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            --shadow: 0 12px 48px rgba(0, 0, 0, 0.65);
+            --r: 20px;
+            --ease: all 0.3s cubic-bezier(.4, 0, .2, 1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg);
-            color: var(--text-main);
+            color: var(--text);
             min-height: 100vh;
-            padding-bottom: 60px;
+            padding-bottom: 70px;
             -webkit-font-smoothing: antialiased;
         }
 
-        a { text-decoration: none; color: inherit; }
-        button, input { font-family: inherit; outline: none; border: none; background: none; }
-        svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed; top: 20px; left: 50%;
-            transform: translateX(-50%) translateY(-120px);
-            background: #1e2025; border: 1px solid var(--border);
-            color: var(--text-main); padding: 14px 24px; border-radius: 14px;
-            font-weight: 700; font-size: 0.9rem; z-index: 9999;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
-            white-space: nowrap; max-width: 90vw; text-align: center;
+        a {
+            text-decoration: none;
+            color: inherit;
         }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        button,
+        input {
+            font-family: inherit;
+            outline: none;
+            border: none;
+            background: none;
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        /* ── TOAST ── */
+        #toast {
+            position: fixed;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-140px);
+            background: #1e2025;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 13px 22px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: .88rem;
+            z-index: 9999;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .8);
+            transition: transform .45s cubic-bezier(.34, 1.56, .64, 1);
+            white-space: nowrap;
+            max-width: 92vw;
+            text-align: center;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
         .otp-badge {
-            display: inline-block; background: var(--primary-gradient); color: var(--btn-text);
-            font-size: 1.2rem; font-weight: 900; padding: 3px 14px; border-radius: 8px; margin-left: 8px;
+            display: inline-block;
+            background: var(--grad);
+            color: var(--btn-text);
+            font-size: 1.15rem;
+            font-weight: 900;
+            padding: 2px 13px;
+            border-radius: 8px;
+            margin-left: 6px;
         }
 
-        /* ===== AUTH OVERLAY ===== */
-        /* Mobile: bottom-sheet. Desktop: centered modal */
-        .auth-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.88); backdrop-filter: blur(18px);
-            display: flex; justify-content: center; align-items: flex-end;
+        /* ── AUTH OVERLAY ── */
+        #authOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .9);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
             z-index: 1000;
         }
-        @media (min-width: 600px) {
-            .auth-overlay { align-items: center; padding: 24px; }
+
+        @media(min-width:600px) {
+            #authOverlay {
+                align-items: center;
+                padding: 20px;
+            }
         }
 
-        /* Card is a flex column so Back+Tabs stay fixed, body scrolls */
         .auth-card {
-            width: 100%; max-width: 460px;
-            background: var(--card-bg);
+            width: 100%;
+            max-width: 460px;
+            background: var(--card);
             border-radius: 24px 24px 0 0;
-            border: 1px solid var(--border); border-bottom: none;
+            border: 1px solid var(--border);
+            border-bottom: none;
             box-shadow: var(--shadow);
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
             max-height: 93vh;
         }
-        @media (min-width: 600px) {
+
+        @media(min-width:600px) {
             .auth-card {
                 border-radius: 24px;
                 border-bottom: 1px solid var(--border);
@@ -85,689 +142,1258 @@
             }
         }
 
-        /* Back bar — flex-shrink:0 means it NEVER disappears when OTP section appears */
-        .auth-back-bar {
+        .auth-top-bar {
             padding: 18px 22px 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             flex-shrink: 0;
         }
-        .auth-back-link {
-            display: inline-flex; align-items: center; gap: 8px;
-            color: var(--text-sub); font-weight: 700; font-size: 0.88rem;
-            transition: color 0.2s;
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--sub);
+            font-weight: 700;
+            font-size: .85rem;
+            transition: .2s;
         }
-        .auth-back-link:hover, .auth-back-link:active { color: var(--primary-solid); }
+
+        .back-link:hover,
+        .back-link:active {
+            color: var(--gold);
+        }
 
         .auth-tabs {
-            display: flex; background: #161618;
-            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            display: flex;
+            background: #161618;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
             flex-shrink: 0;
         }
+
         .auth-tab {
-            flex: 1; padding: 18px; text-align: center;
-            font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            color: var(--text-sub); transition: var(--transition);
-        }
-        .auth-tab.active {
-            color: var(--primary-solid);
-            border-bottom: 3px solid var(--primary-solid);
-            background: var(--card-bg);
+            flex: 1;
+            padding: 17px;
+            text-align: center;
+            font-weight: 700;
+            font-size: .93rem;
+            cursor: pointer;
+            color: var(--sub);
+            transition: var(--ease);
         }
 
-        /* Scrollable form area */
+        .auth-tab.active {
+            color: var(--gold);
+            border-bottom: 3px solid var(--gold);
+            background: var(--card);
+        }
+
         .auth-body {
-            padding: 26px 24px 40px;
+            padding: 26px 24px 42px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             flex: 1;
         }
-        @media (min-width: 600px) { .auth-body { padding: 30px 32px 44px; } }
 
-        .form { display: none; animation: fadeUp 0.35s ease; }
-        .form.active { display: block; }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-
-        .form-title { font-size: 1.45rem; font-weight: 900; margin-bottom: 22px; letter-spacing: -0.5px; }
-
-        .input-wrap { margin-bottom: 16px; }
-        .input-wrap label {
-            display: block; font-size: 0.75rem; font-weight: 800;
-            color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;
+        @media(min-width:600px) {
+            .auth-body {
+                padding: 30px 32px 48px;
+            }
         }
-        .phone-row { display: flex; align-items: center; gap: 10px; }
+
+        .form {
+            display: none;
+            animation: fadeUp .35s ease;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-title {
+            font-size: 1.45rem;
+            font-weight: 900;
+            margin-bottom: 22px;
+            letter-spacing: -.5px;
+        }
+
+        .form-title span {
+            background: var(--grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .iw {
+            margin-bottom: 16px;
+        }
+
+        .iw label {
+            display: block;
+            font-size: .72rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .phone-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .prefix {
-            background: var(--input-bg); border: 1px solid var(--border);
-            padding: 16px 13px; border-radius: 12px;
-            font-weight: 700; color: var(--text-sub); font-size: 1rem; flex-shrink: 0;
+            background: var(--input);
+            border: 1px solid var(--border);
+            padding: 15px 13px;
+            border-radius: 12px;
+            font-weight: 700;
+            color: var(--sub);
+            font-size: 1rem;
+            flex-shrink: 0;
         }
-        .input-wrap input {
-            width: 100%; padding: 15px 16px; border-radius: 12px;
-            border: 1px solid var(--border); background: var(--input-bg);
-            color: var(--text-main); font-family: inherit;
-            font-weight: 600; transition: var(--transition);
-            /* Prevents iOS auto-zoom (must be >= 16px) */
+
+        .iw input {
+            width: 100%;
+            padding: 15px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--input);
+            color: var(--text);
+            font-family: inherit;
+            font-weight: 600;
+            transition: var(--ease);
             font-size: 16px;
         }
-        .input-wrap input:focus { border-color: var(--primary-solid); box-shadow: 0 0 0 3px rgba(224,191,184,0.1); }
-        .input-wrap input::placeholder { color: #555; }
 
-        .hidden { display: none !important; }
+        .iw input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 185, .12);
+        }
+
+        .iw input::placeholder {
+            color: #444;
+        }
+
+        .hidden {
+            display: none !important;
+        }
 
         .btn-primary {
-            width: 100%; padding: 17px; background: var(--primary-gradient);
-            color: var(--btn-text); border-radius: 14px; font-weight: 900;
-            font-size: 1rem; cursor: pointer; transition: var(--transition);
-            margin-top: 8px; letter-spacing: 0.3px; border: none;
+            width: 100%;
+            padding: 17px;
+            background: var(--grad);
+            color: var(--btn-text);
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--ease);
+            margin-top: 8px;
+            letter-spacing: .3px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(212, 175, 185, .2);
         }
-        .btn-primary:active { transform: scale(0.97); }
+
+        .btn-primary:active {
+            transform: scale(.97);
+        }
 
         .btn-outline {
-            width: 100%; padding: 14px; background: transparent; color: var(--text-sub);
-            border: 2px solid var(--border); border-radius: 14px; font-weight: 700;
-            font-size: 0.93rem; cursor: pointer; transition: var(--transition);
-            margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--sub);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: .9rem;
+            cursor: pointer;
+            transition: var(--ease);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .btn-outline:active { border-color: var(--primary-solid); color: var(--primary-solid); }
 
-        /* ===== DASHBOARD ===== */
-        #dashboard { display: none; }
-        .container { max-width: 620px; margin: 0 auto; padding: 0 8px; }
-        @media (min-width: 640px) { .container { padding: 0 16px; } }
-        @media (min-width: 680px) { .container { padding: 0; } }
+        .btn-outline:active {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* ── DASHBOARD ── */
+        #dashboard {
+            display: none;
+        }
+
+        .container {
+            max-width: 620px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        @media(min-width:680px) {
+            .container {
+                padding: 0;
+            }
+        }
 
         .header {
-            display: flex; align-items: center; padding: 20px 16px;
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(15,15,15,0.92); backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border); margin-bottom: 14px;
-        }
-        .back-btn {
-            width: 44px; height: 44px; display: flex; align-items: center;
-            color: var(--primary-solid); cursor: pointer;
-        }
-        .header-title {
-            flex: 1; text-align: center; font-size: 1rem; font-weight: 900;
-            margin-right: 44px; letter-spacing: 2px; text-transform: uppercase;
-            background: var(--primary-gradient); -webkit-background-clip: text;
-            background-clip: text; -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            padding: 18px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 15, 15, .92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
         }
 
-        .section-label {
-            font-size: 0.75rem; font-weight: 800; letter-spacing: 2px;
-            text-transform: uppercase; color: var(--text-sub); padding: 0 6px 8px; margin-top: 6px;
+        .hdr-back {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            color: var(--gold);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .hdr-title {
+            flex: 1;
+            text-align: center;
+            font-size: .95rem;
+            font-weight: 900;
+            margin-right: 44px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            background: var(--grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sec-label {
+            font-size: .7rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--sub);
+            padding: 0 4px 8px;
+            margin-top: 6px;
         }
 
         .card {
-            background: var(--card-bg); border-radius: var(--radius);
-            margin-bottom: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
+            background: var(--card);
+            border-radius: var(--r);
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
         }
 
-        .profile-hero { padding: 32px 24px; display: flex; justify-content: space-between; align-items: center; }
-        .user-name-display { font-size: 1.7rem; font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; }
-        .user-phone-display { font-size: 0.95rem; color: var(--text-sub); margin-top: 6px; font-weight: 600; }
-        .edit-btn {
-            width: 48px; height: 48px; background: var(--input-bg); border-radius: 14px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            color: var(--primary-solid); transition: var(--transition); border: 1px solid var(--border);
+        /* Profile Hero */
+        .profile-hero {
+            padding: 30px 24px;
+            background: linear-gradient(145deg, #1C1C1E 0%, #222022 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
         }
-        .edit-btn:active { transform: scale(0.9); background: var(--primary-gradient); color: var(--btn-text); }
+
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212, 175, 185, .08), transparent 70%);
+            pointer-events: none;
+        }
+
+        .user-initials {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--btn-text);
+            margin-bottom: 14px;
+            box-shadow: 0 6px 20px rgba(200, 159, 156, .3);
+            letter-spacing: -1px;
+            flex-shrink: 0;
+        }
+
+        .user-name-display {
+            font-size: 1.55rem;
+            font-weight: 900;
+            letter-spacing: -.5px;
+            line-height: 1.2;
+        }
+
+        .user-phone-display {
+            font-size: .9rem;
+            color: var(--sub);
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .edit-btn {
+            width: 46px;
+            height: 46px;
+            background: var(--input);
+            border-radius: 14px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--gold);
+            transition: var(--ease);
+            border: 1px solid var(--border);
+            align-self: flex-start;
+        }
+
+        .edit-btn:active {
+            transform: scale(.88);
+            background: var(--grad);
+            color: var(--btn-text);
+        }
 
         /* List items */
         .list-item {
-            display: flex; align-items: center; padding: 18px 18px;
-            border-bottom: 1px solid var(--border); transition: var(--transition); cursor: pointer; min-height: 62px;
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+            cursor: pointer;
+            min-height: 60px;
         }
-        .list-item:last-child { border-bottom: none; }
-        .list-item:active { background: #252527; }
 
-        .item-icon {
-            width: 40px; height: 40px; background: var(--input-bg); border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 14px; color: var(--text-sub); flex-shrink: 0;
+        .list-item:last-child {
+            border-bottom: none;
         }
-        .item-icon.gold { color: var(--primary-solid); }
-        .item-content { flex: 1; min-width: 0; }
-        .item-title { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
-        .item-sub { font-size: 0.8rem; color: var(--text-sub); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .item-right { color: var(--text-sub); opacity: 0.4; flex-shrink: 0; }
-        .action-text { color: var(--primary-solid); font-weight: 800; font-size: 0.95rem; }
+
+        .list-item:active {
+            background: #252527;
+        }
+
+        .ico {
+            width: 40px;
+            height: 40px;
+            background: var(--input);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 14px;
+            color: var(--sub);
+            flex-shrink: 0;
+        }
+
+        .ico.g {
+            color: var(--gold);
+        }
+
+        .ic {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .it {
+            font-size: .93rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .is {
+            font-size: .78rem;
+            color: var(--sub);
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ir {
+            color: var(--sub);
+            opacity: .4;
+            flex-shrink: 0;
+        }
+
+        .action-text {
+            color: var(--gold);
+            font-weight: 800;
+            font-size: .93rem;
+        }
 
         .small-btn {
-            background: transparent; color: var(--text-sub); cursor: pointer;
-            font-size: 0.78rem; font-weight: 700; border: 1px solid var(--border);
-            border-radius: 8px; padding: 6px 12px; flex-shrink: 0; transition: var(--transition);
+            background: transparent;
+            color: var(--sub);
+            cursor: pointer;
+            font-size: .76rem;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 11px;
+            flex-shrink: 0;
+            transition: var(--ease);
         }
-        .small-btn:active { border-color: var(--primary-solid); color: var(--primary-solid); }
 
-        /* Order action buttons */
-        .order-btns { display: flex; gap: 8px; margin-left: 10px; flex-shrink: 0; }
+        .small-btn:active {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .order-btns {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
         .btn-track {
-            border: 2px solid var(--success); color: var(--success);
-            padding: 9px 14px; border-radius: 10px; font-weight: 800; font-size: 0.8rem;
-            cursor: pointer; transition: var(--transition);
+            border: 2px solid var(--success);
+            color: var(--success);
+            padding: 8px 13px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: .78rem;
+            cursor: pointer;
+            transition: var(--ease);
+            background: transparent;
         }
-        .btn-track:active { background: var(--success); color: white; }
+
+        .btn-track:active {
+            background: var(--success);
+            color: #000;
+        }
+
         .btn-reorder {
-            background: var(--primary-gradient); color: var(--btn-text);
-            padding: 9px 14px; border-radius: 10px; font-weight: 800; font-size: 0.8rem;
-            cursor: pointer; transition: var(--transition); border: none;
+            background: var(--grad);
+            color: var(--btn-text);
+            padding: 8px 13px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: .78rem;
+            cursor: pointer;
+            transition: var(--ease);
+            border: none;
         }
-        .btn-reorder:active { transform: scale(0.95); }
+
+        .btn-reorder:active {
+            transform: scale(.95);
+        }
 
         /* Toggle */
-        .toggle-switch { position: relative; width: 50px; height: 28px; flex-shrink: 0; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 34px; transition: .4s; }
-        .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px; background: white; border-radius: 50%; transition: .4s; }
-        input:checked + .slider { background: linear-gradient(135deg,#E0BFB8,#C89F9C); }
-        input:checked + .slider:before { transform: translateX(22px); background: #121212; }
+        .toggle-wrap {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .toggle-wrap input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #333;
+            border-radius: 34px;
+            transition: .4s;
+        }
+
+        .slider:before {
+            content: '';
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background: #fff;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        .toggle-wrap input:checked+.slider {
+            background: linear-gradient(135deg, #E0BFB8, #C89F9C);
+        }
+
+        .toggle-wrap input:checked+.slider:before {
+            transform: translateX(22px);
+            background: #121212;
+        }
 
         /* Accordion */
-        .accordion-header {
-            display: flex; align-items: center; padding: 18px;
-            cursor: pointer; border-bottom: 1px solid var(--border); transition: var(--transition);
+        .acc-hdr {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: .15s;
         }
-        .accordion-header:active { background: #252527; }
-        .accordion-body {
-            overflow: hidden; max-height: 0;
-            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); background: #161618;
-        }
-        .accordion-body.open { max-height: 280px; }
-        .payment-option {
-            display: flex; align-items: center; gap: 14px; padding: 16px 20px;
-            cursor: pointer; border-bottom: 1px solid var(--border);
-            transition: var(--transition); font-weight: 600; color: var(--text-sub); font-size: 0.93rem;
-        }
-        .payment-option:last-child { border-bottom: none; }
-        .payment-option:active { color: var(--primary-solid); background: #1a1a1c; }
-        .chv { transition: transform 0.3s ease; flex-shrink: 0; }
-        .chv.open { transform: rotate(90deg); }
 
+        .acc-hdr:active {
+            background: #252527;
+        }
+
+        .acc-hdr:last-of-type {
+            border-bottom: none;
+        }
+
+        .acc-body {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height .4s cubic-bezier(.4, 0, .2, 1);
+            background: #161618;
+        }
+
+        .acc-body.open {
+            max-height: 300px;
+        }
+
+        .pay-opt {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: .15s;
+            font-weight: 600;
+            color: var(--sub);
+            font-size: .9rem;
+        }
+
+        .pay-opt:last-child {
+            border-bottom: none;
+        }
+
+        .pay-opt:active {
+            color: var(--gold);
+            background: #1a1a1c;
+        }
+
+        .chv {
+            transition: transform .3s ease;
+            flex-shrink: 0;
+        }
+
+        .chv.open {
+            transform: rotate(90deg);
+        }
+
+        /* Transactions */
         .txn-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 18px; border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
         }
-        .txn-row:last-child { border-bottom: none; }
-        .txn-date { font-size: 0.78rem; color: var(--text-sub); margin-top: 2px; }
-        .txn-amount { font-weight: 800; font-size: 0.95rem; }
-        .txn-status {
-            font-size: 0.72rem; font-weight: 700; padding: 3px 9px;
-            border-radius: 8px; margin-top: 4px; display: inline-block;
-        }
-        .txn-status.paid { background: rgba(76,175,80,0.14); color: var(--success); }
 
+        .txn-row:last-child {
+            border-bottom: none;
+        }
+
+        .txn-date {
+            font-size: .75rem;
+            color: var(--sub);
+            margin-top: 2px;
+        }
+
+        .txn-amt {
+            font-weight: 800;
+            font-size: .93rem;
+        }
+
+        .badge {
+            font-size: .7rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 8px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .badge.paid {
+            background: rgba(48, 209, 88, .1);
+            color: var(--success);
+        }
+
+        /* Logout */
         .btn-logout {
-            width: 100%; padding: 20px; background: none; color: var(--danger);
-            font-size: 1rem; font-weight: 900; cursor: pointer; border: none;
-            transition: var(--transition); letter-spacing: 0.3px;
+            width: 100%;
+            padding: 20px;
+            background: none;
+            color: var(--danger);
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            border: none;
+            transition: var(--ease);
+            letter-spacing: .3px;
         }
-        .btn-logout:active { background: rgba(255,69,58,0.07); }
 
-        .legal-footer { text-align: center; padding: 18px 0 40px; }
-        .legal-footer a { font-size: 0.8rem; color: #555; margin: 0 10px; font-weight: 600; }
-        .legal-footer a:hover { color: var(--primary-solid); }
+        .btn-logout:active {
+            background: rgba(255, 69, 58, .07);
+        }
+
+        .legal {
+            text-align: center;
+            padding: 16px 0 44px;
+        }
+
+        .legal a {
+            font-size: .78rem;
+            color: #454545;
+            margin: 0 10px;
+            font-weight: 600;
+        }
+
+        .legal a:hover {
+            color: var(--gold);
+        }
+
+        /* Shimmer for premium feel */
+        @keyframes shimmer {
+            0% {
+                background-position: -400px 0;
+            }
+
+            100% {
+                background-position: 400px 0;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<!-- ===== TOAST ===== -->
-<div class="toast" id="toast"></div>
+    <!-- TOAST -->
+    <div id="toast"></div>
 
-<!-- ===== AUTH MODAL ===== -->
-<div class="auth-overlay" id="authOverlay">
-    <div class="auth-card">
+    <!-- ═══════════════ AUTH OVERLAY ═══════════════ -->
+    <div id="authOverlay">
+        <div class="auth-card">
 
-        <!-- Back bar: flex-shrink:0 — ALWAYS visible, never pushed off-screen -->
-        <div class="auth-back-bar">
-            <a href="index.html" class="auth-back-link">
-                <svg style="width:17px;height:17px;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-            </a>
-        </div>
-
-        <!-- Tabs: flex-shrink:0 -->
-        <div class="auth-tabs">
-            <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Login</div>
-            <div class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</div>
-        </div>
-
-        <!-- Scrollable form body -->
-        <div class="auth-body">
-
-            <!-- LOGIN -->
-            <div class="form active" id="formLogin">
-                <div class="form-title">Welcome Back &#x2726;</div>
-                <div class="input-wrap">
-                    <label>Mobile Number</label>
-                    <div class="phone-row">
-                        <div class="prefix">+91</div>
-                        <input type="tel" id="loginPhone" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
-                    </div>
-                </div>
-                <button class="btn-primary" onclick="sendOtp('login')">Send OTP</button>
-
-                <div id="loginOtpSection" class="hidden" style="margin-top:22px;">
-                    <div class="input-wrap">
-                        <label>Enter OTP — auto-verifies on 4 digits</label>
-                        <input type="text" id="loginOtp" placeholder="_ _ _ _" maxlength="4"
-                               inputmode="numeric" autocomplete="one-time-code"
-                               oninput="autoVerify('login', this.value)">
-                    </div>
-                    <!-- Fallback button in case auto-verify is slow -->
-                    <button class="btn-primary" onclick="verifyOtp('login')">Verify &amp; Login</button>
-                </div>
+            <div class="auth-top-bar">
+                <a href="index.html" class="back-link">
+                    <svg style="width:16px;height:16px;stroke-width:2.6;" viewBox="0 0 24 24">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                    Back
+                </a>
             </div>
 
-            <!-- SIGN UP -->
-            <div class="form" id="formSignup">
-                <div class="form-title">Join the Elite &#x2726;</div>
-                <div class="input-wrap">
-                    <label>Full Name</label>
-                    <input type="text" id="signupName" placeholder="Your full name" autocomplete="name">
-                </div>
-                <div class="input-wrap">
-                    <label>Mobile Number</label>
-                    <div class="phone-row">
-                        <div class="prefix">+91</div>
-                        <input type="tel" id="signupPhone" placeholder="10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel">
-                    </div>
-                </div>
-                <div class="input-wrap">
-                    <label>Delivery Address</label>
-                    <input type="text" id="signupAddress" placeholder="Enter address or tap Fetch" autocomplete="street-address">
-                </div>
-                <button class="btn-outline" onclick="fetchLocation()">&#128205; Fetch Live Location</button>
-                <button class="btn-primary" style="margin-top:14px;" onclick="sendOtp('signup')">Send OTP</button>
-
-                <!-- OTP input appears after Send OTP. No separate verify button — auto-verifies -->
-                <div id="signupOtpSection" class="hidden" style="margin-top:22px;">
-                    <div class="input-wrap">
-                        <label>Enter OTP — account created automatically</label>
-                        <input type="text" id="signupOtp" placeholder="_ _ _ _" maxlength="4"
-                               inputmode="numeric" autocomplete="one-time-code"
-                               oninput="autoVerify('signup', this.value)">
-                    </div>
-                </div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Login</div>
+                <div class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</div>
             </div>
 
+            <div class="auth-body">
+
+                <!-- LOGIN -->
+                <div class="form active" id="formLogin">
+                    <div class="form-title">Welcome Back <span>✦</span></div>
+                    <div class="iw">
+                        <label>Mobile Number</label>
+                        <div class="phone-row">
+                            <div class="prefix">+91</div>
+                            <input type="tel" id="loginPhone" placeholder="10-digit number" maxlength="10"
+                                inputmode="numeric" autocomplete="tel">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="sendOtp('login')">Send OTP</button>
+
+                    <div id="loginOtpSection" class="hidden" style="margin-top:22px;">
+                        <div class="iw">
+                            <label>Enter OTP — auto-verifies on 4 digits</label>
+                            <input type="text" id="loginOtp" placeholder="_ _ _ _" maxlength="4" inputmode="numeric"
+                                autocomplete="one-time-code" oninput="autoVerify('login',this.value)">
+                        </div>
+                        <button class="btn-primary" onclick="verifyOtp('login')">Verify &amp; Login</button>
+                    </div>
+                </div>
+
+                <!-- SIGN UP -->
+                <div class="form" id="formSignup">
+                    <div class="form-title">Join the Elite <span>✦</span></div>
+                    <div class="iw">
+                        <label>Full Name</label>
+                        <input type="text" id="signupName" placeholder="Your full name" autocomplete="name">
+                    </div>
+                    <div class="iw">
+                        <label>Mobile Number</label>
+                        <div class="phone-row">
+                            <div class="prefix">+91</div>
+                            <input type="tel" id="signupPhone" placeholder="10-digit number" maxlength="10"
+                                inputmode="numeric" autocomplete="tel">
+                        </div>
+                    </div>
+                    <div class="iw">
+                        <label>Delivery Address</label>
+                        <input type="text" id="signupAddress" placeholder="Enter address or tap Fetch"
+                            autocomplete="street-address">
+                    </div>
+                    <button class="btn-outline" onclick="fetchLocation()">&#128205; Fetch Live Location</button>
+                    <button class="btn-primary" style="margin-top:14px;" onclick="sendOtp('signup')">Send OTP</button>
+
+                    <div id="signupOtpSection" class="hidden" style="margin-top:22px;">
+                        <div class="iw">
+                            <label>Enter OTP — account created automatically</label>
+                            <input type="text" id="signupOtp" placeholder="_ _ _ _" maxlength="4" inputmode="numeric"
+                                autocomplete="one-time-code" oninput="autoVerify('signup',this.value)">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 
-<!-- ===== DASHBOARD ===== -->
-<div id="dashboard">
-    <div class="container">
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <div id="dashboard">
+        <div class="container">
 
-        <div class="header">
-            <a href="index.html" class="back-btn">
-                <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </a>
-            <div class="header-title">My Profile</div>
-        </div>
+            <div class="header">
+                <a href="index.html" class="hdr-back">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <div class="hdr-title">My Profile</div>
+            </div>
 
-        <!-- 1. User Info -->
-        <div class="card profile-hero">
-            <div>
-                <div class="user-name-display" id="dispName">—</div>
-                <div class="user-phone-display" id="dispPhone">—</div>
+            <!-- 1. PROFILE HERO -->
+            <div class="card profile-hero">
+                <div style="display:flex;flex-direction:column;align-items:flex-start;">
+                    <div class="user-initials" id="userInitials">—</div>
+                    <div class="user-name-display" id="dispName">—</div>
+                    <div class="user-phone-display" id="dispPhone">—</div>
+                </div>
+                <button class="edit-btn" onclick="editName()" title="Edit Profile">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                </button>
             </div>
-            <button class="edit-btn" onclick="editName()" title="Edit Name">
-                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-        </div>
 
-        <!-- 2. Addresses -->
-        <div class="section-label">Saved Locations</div>
-        <div class="card">
-            <div class="list-item">
-                <div class="item-icon gold">
-                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                </div>
-                <div class="item-content">
-                    <div class="item-title">Home Residence</div>
-                    <div class="item-sub" id="homeAddress">A-12, Green Park, Bihar, India</div>
-                </div>
-                <button class="small-btn" onclick="editHomeAddress()">Edit</button>
-            </div>
-            <div class="list-item">
-                <div class="item-icon">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                </div>
-                <div class="item-content">
-                    <div class="item-title">Corporate HQ</div>
-                    <div class="item-sub" id="corpAddress">Tech Park Plaza, Level 4</div>
-                </div>
-            </div>
-            <div class="list-item" onclick="addNewAddress()">
-                <div class="item-icon gold">
-                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </div>
-                <div class="item-content">
-                    <div class="action-text">+ Add Prestigious Address</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. Orders -->
-        <div class="section-label">Recent Activity</div>
-        <div class="card">
-            <div class="list-item" style="flex-wrap:wrap; gap:10px; align-items:flex-start; padding:20px 18px;">
-                <div class="item-icon gold" style="margin-right:0;">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                </div>
-                <div class="item-content" style="margin-left:12px;">
-                    <div class="item-title">Biryani House</div>
-                    <div class="item-sub">Preparing... • ₹320</div>
-                </div>
-                <div class="order-btns">
-                    <button class="btn-track" onclick="alert('Live tracking initialized for current order.')">Track Now</button>
-                </div>
-            </div>
-            <div class="list-item" style="flex-wrap:wrap; gap:10px; align-items:flex-start; padding:20px 18px;">
-                <div class="item-icon">
-                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-                <div class="item-content" style="margin-left:12px;">
-                    <div class="item-title">Pizza Central</div>
-                    <div class="item-sub">Delivered • ₹449</div>
-                </div>
-                <div class="order-btns">
-                    <button class="btn-reorder" onclick="alert('Previous items added to cart.')">Request Again</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Financials -->
-        <div class="section-label">Financials</div>
-        <div class="card">
-            <!-- Payment accordion -->
-            <div>
-                <div class="accordion-header" onclick="toggleAccordion('payments')">
-                    <div class="item-icon" style="margin-right:14px;">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <!-- 2. ADDRESSES -->
+            <div class="sec-label">Saved Locations</div>
+            <div class="card">
+                <div class="list-item">
+                    <div class="ico g">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
                     </div>
-                    <div class="item-content">
-                        <div class="item-title">Exquisite Payment Methods</div>
-                        <div class="item-sub">UPI, Cards, Net Banking</div>
+                    <div class="ic">
+                        <div class="it">Home Residence</div>
+                        <div class="is" id="homeAddress">A-12, Green Park, Bihar, India</div>
                     </div>
-                    <div class="item-right chv" id="chv-payments"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+                    <button class="small-btn" onclick="editAddr('home')">Edit</button>
                 </div>
-                <div class="accordion-body" id="body-payments">
-                    <div class="payment-option" onclick="alert('UPI selected.')">
-                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
-                        UPI
+                <div class="list-item">
+                    <div class="ico">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="2" y="7" width="20" height="14" rx="2" />
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                        </svg>
                     </div>
-                    <div class="payment-option" onclick="alert('Card payment selected.')">
-                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    <div class="ic">
+                        <div class="it">Corporate HQ</div>
+                        <div class="is" id="corpAddress">Tech Park Plaza, Level 4</div>
+                    </div>
+                    <button class="small-btn" onclick="editAddr('corp')">Edit</button>
+                </div>
+                <div class="list-item" onclick="addAddress()">
+                    <div class="ico g">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                    </div>
+                    <div class="ic">
+                        <div class="action-text">+ Add Prestigious Address</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. ACTIVE ORDERS -->
+            <div class="sec-label">Recent Activity</div>
+            <div class="card">
+                <div class="list-item" style="flex-wrap:wrap;gap:10px;padding:20px 18px;align-items:flex-start;">
+                    <div class="ico g" style="margin-right:0;">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                    </div>
+                    <div class="ic" style="margin-left:12px;">
+                        <div class="it">Biryani House</div>
+                        <div class="is">Preparing... &bull; ₹320</div>
+                    </div>
+                    <div class="order-btns">
+                        <button class="btn-track" onclick="trackOrder('Biryani House')">Track Now</button>
+                    </div>
+                </div>
+                <div class="list-item" style="flex-wrap:wrap;gap:10px;padding:20px 18px;align-items:flex-start;">
+                    <div class="ico" style="margin-right:0;">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                    </div>
+                    <div class="ic" style="margin-left:12px;">
+                        <div class="it">Pizza Central</div>
+                        <div class="is">Delivered &bull; ₹449</div>
+                    </div>
+                    <div class="order-btns">
+                        <button class="btn-reorder" onclick="reorder('Pizza Central')">Request Again</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. FINANCIALS -->
+            <div class="sec-label">Financials</div>
+            <div class="card">
+
+                <!-- Payment Methods Accordion -->
+                <div class="acc-hdr" onclick="toggleAcc('pay')">
+                    <div class="ico" style="margin-right:14px;">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                            <line x1="2" y1="10" x2="22" y2="10" />
+                        </svg>
+                    </div>
+                    <div class="ic">
+                        <div class="it">Exquisite Payment Methods</div>
+                        <div class="is">UPI, Cards, Net Banking</div>
+                    </div>
+                    <div class="ir chv" id="chv-pay"><svg viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg></div>
+                </div>
+                <div class="acc-body" id="body-pay">
+                    <div class="pay-opt" onclick="selectPayment('UPI — Google Pay / PhonePe')">
+                        <svg viewBox="0 0 24 24" style="color:var(--gold);">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="8 12 12 16 16 12" />
+                            <line x1="12" y1="8" x2="12" y2="16" />
+                        </svg>
+                        UPI — Google Pay / PhonePe
+                    </div>
+                    <div class="pay-opt" onclick="selectPayment('Credit / Debit Card')">
+                        <svg viewBox="0 0 24 24" style="color:var(--gold);">
+                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                            <line x1="2" y1="10" x2="22" y2="10" />
+                        </svg>
                         Credit / Debit Card
                     </div>
-                    <div class="payment-option" onclick="alert('Net Banking selected.')">
-                        <svg viewBox="0 0 24 24" style="color:var(--primary-solid);"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+                    <div class="pay-opt" onclick="selectPayment('Net Banking')">
+                        <svg viewBox="0 0 24 24" style="color:var(--gold);">
+                            <path d="M3 9l9-6 9 6v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" />
+                            <polyline points="9 22 9 14 15 14 15 22" />
+                        </svg>
                         Net Banking
                     </div>
+                    <div class="pay-opt" onclick="selectPayment('Cash on Delivery')">
+                        <svg viewBox="0 0 24 24" style="color:var(--gold);">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                        Cash on Delivery
+                    </div>
+                </div>
+
+                <!-- Transaction Archives Accordion -->
+                <div class="acc-hdr" onclick="toggleAcc('txn')" style="border-top:1px solid var(--border);">
+                    <div class="ico" style="margin-right:14px;">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                    </div>
+                    <div class="ic">
+                        <div class="it">Transaction Archives</div>
+                        <div class="is">Past settlements</div>
+                    </div>
+                    <div class="ir chv" id="chv-txn"><svg viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg></div>
+                </div>
+                <div class="acc-body" id="body-txn">
+                    <div class="txn-row">
+                        <div>
+                            <div style="font-weight:700;font-size:.9rem;">Biryani House</div>
+                            <div class="txn-date">10 Apr 2026 &bull; UPI</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div class="txn-amt">₹320</div>
+                            <span class="badge paid">Settled</span>
+                        </div>
+                    </div>
+                    <div class="txn-row">
+                        <div>
+                            <div style="font-weight:700;font-size:.9rem;">Pizza Central</div>
+                            <div class="txn-date">14 Mar 2026 &bull; Card</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div class="txn-amt">₹449</div>
+                            <span class="badge paid">Settled</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Transaction accordion -->
-            <div>
-                <div class="accordion-header" onclick="toggleAccordion('txn')" style="border-top:1px solid var(--border);">
-                    <div class="item-icon" style="margin-right:14px;">
-                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <!-- 5. PREFERENCES -->
+            <div class="sec-label">Preferences</div>
+            <div class="card">
+                <label class="list-item" style="cursor:pointer;">
+                    <div class="ico" style="margin-right:14px;">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
                     </div>
-                    <div class="item-content">
-                        <div class="item-title">Transaction Archives</div>
-                        <div class="item-sub">Past settlements</div>
+                    <div class="ic">
+                        <div class="it">VIP Order Notifications</div>
                     </div>
-                    <div class="item-right chv" id="chv-txn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-                </div>
-                <div class="accordion-body" id="body-txn">
-                    <div class="txn-row">
-                        <div>
-                            <div style="font-weight:700;font-size:0.93rem;">Biryani House</div>
-                            <div class="txn-date">10 Apr 2026</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div class="txn-amount">₹320</div>
-                            <span class="txn-status paid">Settled</span>
-                        </div>
+                    <div class="toggle-wrap">
+                        <input type="checkbox" id="notifToggle" checked>
+                        <span class="slider"></span>
                     </div>
-                    <div class="txn-row">
-                        <div>
-                            <div style="font-weight:700;font-size:0.93rem;">Pizza Central</div>
-                            <div class="txn-date">14 Mar 2026</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div class="txn-amount">₹449</div>
-                            <span class="txn-status paid">Settled</span>
-                        </div>
+                </label>
+                <label class="list-item" style="cursor:pointer;">
+                    <div class="ico" style="margin-right:14px;">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
                     </div>
-                </div>
+                    <div class="ic">
+                        <div class="it">Exclusive Offers &amp; Deals</div>
+                    </div>
+                    <div class="toggle-wrap">
+                        <input type="checkbox" id="offersToggle" checked>
+                        <span class="slider"></span>
+                    </div>
+                </label>
             </div>
-        </div>
 
-        <!-- 5. Preferences -->
-        <div class="section-label">Preferences</div>
-        <div class="card">
-            <label class="list-item" style="cursor:pointer;">
-                <div class="item-icon" style="margin-right:14px;">
-                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </div>
-                <div class="item-content"><div class="item-title">VIP Order Notifications</div></div>
-                <div class="toggle-switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </div>
-            </label>
-        </div>
+            <!-- 6. LOGOUT -->
+            <div class="card">
+                <button class="btn-logout" onclick="handleLogout()">
+                    &#9889; Log Out
+                </button>
+            </div>
 
-        <!-- 6. Logout -->
-        <div class="card">
-            <button class="btn-logout" onclick="handleLogout()">Log Out</button>
-        </div>
+            <div class="legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Help &amp; Support</a>
+            </div>
 
-        <div class="legal-footer">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Use</a>
         </div>
-
     </div>
-</div>
 
-<script>
-    const SK_USERS = 'quickies_users';
-    const SK_LOGIN = 'quickies_isLoggedIn';
-    const SK_USER  = 'quickies_currentUser';
+    <script>
+        // ─────────────────────────────────────────────
+        //  DATA LAYER — swap these functions for Firebase
+        // ─────────────────────────────────────────────
+        const SK = {
+            users: 'quickie_users',
+            session: 'quickie_isLoggedIn',
+            user: 'quickie_currentUser'
+        };
 
-    // ---- INIT ----
-    window.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem(SK_LOGIN) === 'true') {
-            const u = JSON.parse(localStorage.getItem(SK_USER));
-            showDashboard(u);
-        } else {
-            showAuth();
-        }
-    });
-
-    function showAuth() {
-        document.getElementById('authOverlay').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'none';
-        // Reset OTP fields
-        ['loginOtp','signupOtp'].forEach(id => document.getElementById(id).value = '');
-        document.getElementById('loginOtpSection').classList.add('hidden');
-        document.getElementById('signupOtpSection').classList.add('hidden');
-    }
-
-    function showDashboard(u) {
-        document.getElementById('authOverlay').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        if (u) {
-            document.getElementById('dispName').textContent = u.name || '—';
-            document.getElementById('dispPhone').textContent = '+91 ' + (u.phone || '—');
-        }
-    }
-
-    // ---- TAB SWITCH ----
-    function switchTab(tab) {
-        ['login','signup'].forEach(t => {
-            const tId = 'tab' + t.charAt(0).toUpperCase() + t.slice(1);
-            const fId = 'form' + t.charAt(0).toUpperCase() + t.slice(1);
-            document.getElementById(tId).classList.toggle('active', t === tab);
-            document.getElementById(fId).classList.toggle('active', t === tab);
-        });
-        // Hide OTP sections on tab switch
-        document.getElementById('loginOtpSection').classList.add('hidden');
-        document.getElementById('signupOtpSection').classList.add('hidden');
-    }
-
-    // ---- TOAST ----
-    function showToast(html) {
-        const t = document.getElementById('toast');
-        t.innerHTML = html;
-        t.classList.add('show');
-        clearTimeout(t._timer);
-        t._timer = setTimeout(() => t.classList.remove('show'), 4200);
-    }
-
-    // ---- SEND OTP ----
-    function sendOtp(type) {
-        const phoneEl = document.getElementById(type === 'login' ? 'loginPhone' : 'signupPhone');
-        const phone = phoneEl.value.trim();
-
-        if (!/^\d{10}$/.test(phone)) {
-            showToast('&#x26A0;&#xFE0F; Enter a valid 10-digit number');
-            phoneEl.focus();
-            return;
-        }
-
-        // Signup: validate fields before sending OTP
-        if (type === 'signup') {
-            const name = document.getElementById('signupName').value.trim();
-            const addr = document.getElementById('signupAddress').value.trim();
-            if (!name) { showToast('&#x26A0;&#xFE0F; Please enter your Full Name'); document.getElementById('signupName').focus(); return; }
-            if (!addr) { showToast('&#x26A0;&#xFE0F; Please enter your Delivery Address'); document.getElementById('signupAddress').focus(); return; }
-
-            // Check duplicate
-            const db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
-            if (db.find(u => u.phone === phone)) {
-                showToast('&#x26A0;&#xFE0F; Number already registered. Please Login.');
-                switchTab('login');
-                document.getElementById('loginPhone').value = phone;
-                return;
-            }
-        }
-
-        showToast('&#x1F4F2; Your Quickies OTP is <span class="otp-badge">1234</span>');
-        const section = document.getElementById(type + 'OtpSection');
-        section.classList.remove('hidden');
-        const otpInput = document.getElementById(type + 'Otp');
-        otpInput.value = '';
-        setTimeout(() => otpInput.focus(), 100);
-    }
-
-    // ---- AUTO-VERIFY (fires on every keystroke, triggers at exactly 4 digits) ----
-    function autoVerify(type, val) {
-        if (val.length === 4) {
-            verifyOtp(type);
-        }
-    }
-
-    // ---- VERIFY OTP ----
-    function verifyOtp(type) {
-        const otp = document.getElementById(type === 'login' ? 'loginOtp' : 'signupOtp').value.trim();
-        if (!otp) { showToast('&#x26A0;&#xFE0F; Please enter the OTP'); return; }
-        if (otp !== '1234') { showToast('&#x274C; Invalid OTP. Hint: 1234'); return; }
-
-        if (type === 'login') {
-            const phone = document.getElementById('loginPhone').value.trim();
-            const db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
-            const user = db.find(u => u.phone === phone);
-            if (!user) {
-                showToast('&#x26A0;&#xFE0F; Number not found. Please Sign Up first!');
-                switchTab('signup');
-                document.getElementById('signupPhone').value = phone;
-                return;
-            }
-            localStorage.setItem(SK_LOGIN, 'true');
-            localStorage.setItem(SK_USER, JSON.stringify(user));
-            window.location.href = 'index.html';
-
-        } else {
-            const name    = document.getElementById('signupName').value.trim();
-            const phone   = document.getElementById('signupPhone').value.trim();
-            const address = document.getElementById('signupAddress').value.trim();
-            if (!name || !phone || !address) { showToast('&#x26A0;&#xFE0F; Please fill all fields.'); return; }
-
-            const user = { name, phone, address };
-            const db = JSON.parse(localStorage.getItem(SK_USERS)) || [];
-            db.push(user);
-            localStorage.setItem(SK_USERS, JSON.stringify(db));
-            localStorage.setItem(SK_LOGIN, 'true');
-            localStorage.setItem(SK_USER, JSON.stringify(user));
-            window.location.href = 'index.html';
-        }
-    }
-
-    // ---- GEOLOCATION ----
-    function fetchLocation() {
-        if (!navigator.geolocation) { showToast('&#x26A0;&#xFE0F; Geolocation not supported'); return; }
-        showToast('&#x1F4E1; Fetching your location...');
-        navigator.geolocation.getCurrentPosition(
-            pos => {
-                document.getElementById('signupAddress').value =
-                    `Lat ${pos.coords.latitude.toFixed(4)}, Lng ${pos.coords.longitude.toFixed(4)} — Live`;
-                showToast('&#x2705; Location fetched!');
+        // Firebase-ready: replace body with Firestore calls
+        const DB = {
+            getUsers: () => JSON.parse(localStorage.getItem(SK.users)) || [],
+            saveUsers: (db) => localStorage.setItem(SK.users, JSON.stringify(db)),
+            getSession: () => localStorage.getItem(SK.session) === 'true',
+            setSession: (u) => {
+                localStorage.setItem(SK.session, 'true');
+                localStorage.setItem(SK.user, JSON.stringify(u));
             },
-            () => {
-                document.getElementById('signupAddress').value = 'Bagaha, Bihar, India 845101';
-                showToast('&#x1F4CD; Default location applied');
+            clearSession: () => {
+                localStorage.setItem(SK.session, 'false');
+                localStorage.removeItem(SK.user);
+            },
+            getCurrentUser: () => JSON.parse(localStorage.getItem(SK.user)),
+            saveCurrentUser: (u) => localStorage.setItem(SK.user, JSON.stringify(u))
+        };
+
+        // ─────────────────────────────────────────────
+        //  INIT
+        // ─────────────────────────────────────────────
+        window.addEventListener('DOMContentLoaded', () => {
+            if (DB.getSession()) {
+                showDashboard(DB.getCurrentUser());
+            } else {
+                showAuth();
             }
-        );
-    }
+            document.getElementById('notifToggle').addEventListener('change', function () {
+                showToast(this.checked ? '🔔 Notifications ON' : '🔕 Notifications OFF');
+            });
+            document.getElementById('offersToggle').addEventListener('change', function () {
+                showToast(this.checked ? '✅ Exclusive Offers ON' : '❌ Exclusive Offers OFF');
+            });
+        });
 
-    // ---- DASHBOARD ACTIONS ----
-    function editName() {
-        const user = JSON.parse(localStorage.getItem(SK_USER)) || {};
-        const n = prompt('Update your name:', user.name || '');
-        if (n && n.trim()) {
-            user.name = n.trim();
-            localStorage.setItem(SK_USER, JSON.stringify(user));
-            document.getElementById('dispName').textContent = user.name;
-            showToast('&#x2705; Name updated!');
+        // ─────────────────────────────────────────────
+        //  AUTH FLOW
+        // ─────────────────────────────────────────────
+        function showAuth() {
+            document.getElementById('authOverlay').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            resetOtpFields();
         }
-    }
 
-    function editHomeAddress() {
-        const curr = document.getElementById('homeAddress').textContent;
-        const n = prompt('Update Home Address:', curr);
-        if (n && n.trim()) {
-            document.getElementById('homeAddress').textContent = n.trim();
-            showToast('&#x2705; Home address updated!');
+        function resetOtpFields() {
+            ['loginOtp', 'signupOtp'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('loginOtpSection').classList.add('hidden');
+            document.getElementById('signupOtpSection').classList.add('hidden');
         }
-    }
 
-    function addNewAddress() {
-        const n = prompt('Enter new address:');
-        if (n && n.trim()) {
-            document.getElementById('corpAddress').textContent = n.trim();
-            showToast('&#x2705; Address saved to Corporate HQ!');
+        function showDashboard(u) {
+            document.getElementById('authOverlay').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            if (u) populateProfile(u);
         }
-    }
 
-    // ---- ACCORDION ----
-    function toggleAccordion(key) {
-        const body = document.getElementById('body-' + key);
-        const chv  = document.getElementById('chv-' + key);
-        const open = body.classList.toggle('open');
-        chv.classList.toggle('open', open);
-    }
-
-    // ---- LOGOUT ----
-    function handleLogout() {
-        if (confirm('Are you sure you want to Log Out?')) {
-            localStorage.setItem(SK_LOGIN, 'false');
-            localStorage.removeItem(SK_USER);
-            showAuth();
+        function populateProfile(u) {
+            const name = u.name || '';
+            document.getElementById('dispName').textContent = name || '—';
+            document.getElementById('dispPhone').textContent = '+91 ' + (u.phone || '—');
+            // Initials from name
+            const parts = name.trim().split(' ').filter(Boolean);
+            const initials = parts.length >= 2
+                ? parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase()
+                : (parts[0] ? parts[0][0].toUpperCase() : '?');
+            document.getElementById('userInitials').textContent = initials;
+            // Populate address from signup if available
+            if (u.address) document.getElementById('homeAddress').textContent = u.address;
         }
-    }
-</script>
+
+        function switchTab(tab) {
+            ['login', 'signup'].forEach(t => {
+                const T = t.charAt(0).toUpperCase() + t.slice(1);
+                document.getElementById('tab' + T).classList.toggle('active', t === tab);
+                document.getElementById('form' + T).classList.toggle('active', t === tab);
+            });
+            resetOtpFields();
+        }
+
+        // ─────────────────────────────────────────────
+        //  OTP
+        // ─────────────────────────────────────────────
+        function sendOtp(type) {
+            const phoneEl = document.getElementById(type === 'login' ? 'loginPhone' : 'signupPhone');
+            const phone = phoneEl.value.trim();
+
+            if (!/^\d{10}$/.test(phone)) {
+                showToast('⚠️ Enter a valid 10-digit number');
+                phoneEl.focus(); return;
+            }
+
+            if (type === 'signup') {
+                const name = document.getElementById('signupName').value.trim();
+                const addr = document.getElementById('signupAddress').value.trim();
+                if (!name) { showToast('⚠️ Please enter your Full Name'); document.getElementById('signupName').focus(); return; }
+                if (!addr) { showToast('⚠️ Please enter your Delivery Address'); document.getElementById('signupAddress').focus(); return; }
+                const dup = DB.getUsers().find(u => u.phone === phone);
+                if (dup) { showToast('⚠️ Already registered. Please Login.'); switchTab('login'); document.getElementById('loginPhone').value = phone; return; }
+            }
+
+            showToast('📲 Your Quickie OTP is <span class="otp-badge">1234</span>');
+            document.getElementById(type + 'OtpSection').classList.remove('hidden');
+            const otpEl = document.getElementById(type + 'Otp');
+            otpEl.value = '';
+            setTimeout(() => otpEl.focus(), 100);
+        }
+
+        function autoVerify(type, val) {
+            if (val.length === 4) verifyOtp(type);
+        }
+
+        function verifyOtp(type) {
+            const otp = document.getElementById(type === 'login' ? 'loginOtp' : 'signupOtp').value.trim();
+            if (!otp) { showToast('⚠️ Please enter the OTP'); return; }
+            if (otp !== '1234') { showToast('❌ Incorrect OTP — Hint: 1234'); return; }
+
+            if (type === 'login') {
+                const phone = document.getElementById('loginPhone').value.trim();
+                const user = DB.getUsers().find(u => u.phone === phone);
+                if (!user) {
+                    showToast('⚠️ Number not found. Please Sign Up!');
+                    switchTab('signup');
+                    document.getElementById('signupPhone').value = phone;
+                    return;
+                }
+                DB.setSession(user);
+                showToast('✅ Welcome to Quickie! Redirecting...');
+                setTimeout(() => { window.location.href = 'index.html'; }, 900);
+
+            } else {
+                const name = document.getElementById('signupName').value.trim();
+                const phone = document.getElementById('signupPhone').value.trim();
+                const address = document.getElementById('signupAddress').value.trim();
+                if (!name || !phone || !address) { showToast('⚠️ Fill all fields.'); return; }
+
+                const user = { name, phone, address };
+                const db = DB.getUsers();
+                db.push(user);
+                DB.saveUsers(db);
+                DB.setSession(user);
+                showToast('🎉 Welcome to Quickie, ' + name + '! Redirecting...');
+                setTimeout(() => { window.location.href = 'index.html'; }, 900);
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        //  GEOLOCATION
+        // ─────────────────────────────────────────────
+        function fetchLocation() {
+            if (!navigator.geolocation) { showToast('⚠️ Geolocation not supported'); return; }
+            showToast('📡 Fetching your location...');
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    document.getElementById('signupAddress').value =
+                        `Lat ${pos.coords.latitude.toFixed(4)}, Lng ${pos.coords.longitude.toFixed(4)} — Live`;
+                    showToast('✅ Location fetched!');
+                },
+                () => {
+                    document.getElementById('signupAddress').value = 'Bagaha, Bihar, India 845101';
+                    showToast('📍 Default location applied');
+                }
+            );
+        }
+
+        // ─────────────────────────────────────────────
+        //  DASHBOARD ACTIONS
+        // ─────────────────────────────────────────────
+        function editName() {
+            const user = DB.getCurrentUser() || {};
+            const n = prompt('Update your display name:', user.name || '');
+            if (n && n.trim()) {
+                user.name = n.trim();
+                DB.saveCurrentUser(user);
+                populateProfile(user);
+                showToast('✅ Name updated!');
+            }
+        }
+
+        function editAddr(type) {
+            const el = type === 'home' ? 'homeAddress' : 'corpAddress';
+            const label = type === 'home' ? 'Home Residence' : 'Corporate HQ';
+            const curr = document.getElementById(el).textContent;
+            const n = prompt('Update ' + label + ':', curr);
+            if (n && n.trim()) {
+                document.getElementById(el).textContent = n.trim();
+                showToast('✅ Address updated!');
+            }
+        }
+
+        function addAddress() {
+            const n = prompt('Enter a new prestigious address:');
+            if (n && n.trim()) {
+                document.getElementById('corpAddress').textContent = n.trim();
+                showToast('✅ Corporate HQ address saved!');
+            }
+        }
+
+        function trackOrder(shop) {
+            alert('🚴 Live tracking initialized!\n\nYour order from ' + shop + ' is on the way.\nEstimated arrival: 18 minutes.');
+        }
+
+        function reorder(shop) {
+            alert('🛒 Items from ' + shop + ' have been added back to your cart!\n\nHead to checkout to complete your order.');
+        }
+
+        function selectPayment(method) {
+            showToast('💳 ' + method + ' selected');
+        }
+
+        // ─────────────────────────────────────────────
+        //  ACCORDION
+        // ─────────────────────────────────────────────
+        function toggleAcc(key) {
+            const body = document.getElementById('body-' + key);
+            const chv = document.getElementById('chv-' + key);
+            const open = body.classList.toggle('open');
+            chv.classList.toggle('open', open);
+        }
+
+        // ─────────────────────────────────────────────
+        //  LOGOUT
+        // ─────────────────────────────────────────────
+        function handleLogout() {
+            if (confirm('Are you sure you want to Log Out?')) {
+                DB.clearSession();
+                showToast('👋 Logged out. Redirecting...');
+                setTimeout(() => { window.location.href = 'index.html'; }, 700);
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        //  TOAST
+        // ─────────────────────────────────────────────
+        function showToast(html) {
+            const t = document.getElementById('toast');
+            t.innerHTML = html;
+            t.classList.add('show');
+            clearTimeout(t._timer);
+            t._timer = setTimeout(() => t.classList.remove('show'), 4000);
+        }
+    </script>
 </body>
+
 </html>
